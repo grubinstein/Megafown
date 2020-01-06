@@ -1,14 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Timur Kiyivinski</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-    </head>
-    <body>
-        <div id="app-container">
-        </div>
-        <script type="text/javascript" src="/assets/bundle.js" charset="utf-8"></script>
+<head>
+    <meta charset="utf-8">
+    <title>Megafown</title>
+    <link rel="shortcut icon" href="#">
+    <script src="https://unpkg.com/peerjs@1.0.0/dist/peerjs.min.js"></script>
+</head>
+<body>
+    <h1>Megafown</h1>
+    <p class="description">Make yourself heard</p>
+    <p id="local-peer-ID">No ID</p>
+    <button type="button" id="cast-btn">Cast</button>
+    <p id="cast-ready" hidden>Ready to cast</p>
+    <h1>Make Call</h1>
+    <form class="callForm">
+        <label for="remoteID">Remote ID</label>
+        <input id="remoteID" name="remoteID" type="text">
+        <button type="button" id="call-btn">Call</button>
+    </form>
+    <audio controls id="audio-player">
+
+    </audio>
+    <script type="text/javascript" src="/assets/bundle.js" charset="utf-8"></script>
     </body>
 </html>

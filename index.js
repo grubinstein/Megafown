@@ -1,19 +1,33 @@
 'use strict'
 
-const fs = require('fs')
+const fs = require('fs');
 
-const express = require('express')
-const bodyParser = require('body-parser')
-const expressSanitizer = require('express-sanitizer')
-const cors = require('cors')
+const express = require('express');
+const bodyParser = require('body-parser');
+const expressSanitizer = require('express-sanitizer');
+const cors = require('cors');
 
-const webpack = require('webpack')
-const webpackDevMiddleware = require('webpack-dev-middleware')
-const webpackHotMiddleware = require('webpack-hot-middleware')
+const webpack = require('webpack');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
+
+const env = JSON.parse(fs.readFileSync('env.json', 'utf8'))
+
+const mongoose = require('mongoose');
+const { catchErrors } = require('./handlers/errorHandlers');
+
+mongoose.connect(process.env.DATABASE || env.database, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true});
+mongoose.Promise = global.Promise; // Tell Mongoose to use ES6 promises
+mongoose.connection.on('error', (err) => {
+  console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`);
+});
+
+require('./models/Cast')
+
+const castController = require('./controllers/castController');
 
 ;(function () {
   // Environment
-  const env = JSON.parse(fs.readFileSync('env.json', 'utf8'))
 
   // Create express application
   const app = express()
@@ -54,6 +68,8 @@ const webpackHotMiddleware = require('webpack-hot-middleware')
       root: 'public'
     })
   })
+  
+  app.post('/newcast', catchErrors(castController.newCast))
 
   // Start Express
   app.listen(process.env.PORT || env.port)

@@ -24,6 +24,6 @@ const castSchema = new mongoose.Schema({
         type: String,
         required: 'You must supply a peerid'
     }
-})
+});
 
 module.exports = mongoose.model('Cast', castSchema);

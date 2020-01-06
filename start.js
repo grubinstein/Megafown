@@ -1,26 +1,19 @@
+const fs = require('fs');
 const mongoose = require('mongoose');
-const reload = require('reload');
 
-// import environmental variables from our variables.env file
-require('dotenv').config({ path: 'variables.env' });
+const env = JSON.parse(fs.readFileSync('env.json', 'utf8'))
 
-// Connect to our Database and handle any bad connections
-mongoose.connect(process.env.DATABASE, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true});
+mongoose.connect(env.database, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true});
 mongoose.Promise = global.Promise; // Tell Mongoose to use ES6 promises
 mongoose.connection.on('error', (err) => {
   console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`);
 });
 
-// READY?! Let's go!
 
-// import all of our models
-require('./models/Store');
-require('./models/User');
-require('./models/Review');
+require('./models/Cast');
 
-// Start our app!
 const app = require('./app');
-app.set('port', process.env.PORT || 7777);
+app.set('port', env.port || 7777);
 const server = app.listen(app.get('port'), () => {
   console.log(`Express running → PORT ${server.address().port}`);
 });

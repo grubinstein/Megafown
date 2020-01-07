@@ -1,11 +1,14 @@
 const path = require('path')
 const webpack = require('webpack')
-
+require("babel-polyfill")
 // Define webpack config and loaders here
 module.exports = {
-  entry: {
-    app: ['./app/main.js', 'webpack-hot-middleware/client']
-  },
+  entry: 
+    {
+      polyfill: 'babel-polyfill',
+      app: ['./app/main.js', 'webpack-hot-middleware/client']
+    }
+  ,
   output: {
     path: path.resolve(__dirname, 'public'),
     publicPath: '/assets/',

@@ -15,6 +15,9 @@
   "author": "Timur Kiyivinski",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.19.1",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
     "body-parser": "^1.15.2",
     "cors": "^2.8.1",
     "express": "^4.14.0",

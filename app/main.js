@@ -2,28 +2,54 @@
 
 // Use webpack normally
 require('./main.scss')
+import axios from 'axios';
 
 
 const peer = new Peer();
 
 peer.on('open', function(id) {
-	document.getElementById("local-peer-ID").innerText = id;
+	window.peerid = id;
 });
 
 document.getElementById("call-btn").addEventListener("click", makeCall);
 
-document.getElementById("cast-btn").addEventListener("click", () => {
-	const getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || (navigator.mediaDevices && navigator.mediaDevices.getUserMedia)).bind(navigator);
-    getUserMedia({video: false, audio:true}, (stream) => {
-		window.localStream = stream;
-		document.getElementById("cast-btn").style.display = "none";
-		document.getElementById("cast-ready").style.display = "block";
-    }, (err) => {
-        console.log("Failed to get user media", err)
-    })
-})
+document.getElementById("cast-btn").addEventListener("click", prepareForCast);
 
-function makeCall() {  
+const prepareForCast = async () => {
+	const [stream, position] = await Promise.all(getAudioStreamPromise, getLocationPromise);
+	window.localStream = stream;
+	await axios.post('/api/new-cast', {
+		position: position,
+		location: location,
+		peerid: window.peerid
+	});
+}
+
+const getAudioStreamPromise = () => {
+	return new Promise((resolve, reject) => {
+		const getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || (navigator.mediaDevices && navigator.mediaDevices.getUserMedia)).bind(navigator);
+		getUserMedia({video: false, audio:true}, (stream) => {
+			resolve(stream);
+		}, (err) => {
+			reject(err);
+		});
+	});
+};
+
+const getLocationPromise = () => {
+	return new Promise((resolve, reject) => {
+		navigator.geolocation.getCurrentPosition( position => {
+			resolve(position);
+		},(err) => {
+			reject(err);
+		});
+	});
+};
+
+
+
+
+const makeCall = () => {  
 	const remoteId = document.getElementById("remoteID").value;
 	
 	var conn = peer.connect(remoteId);
@@ -45,7 +71,3 @@ peer.on('call', (call) => {
 		player.play();
 	})
 })
-
-navigator.geolocation.getCurrentPosition((position) => {
-  console.log("Position is " + position.coords.latitude + " " + position.coords.longitude)
-});

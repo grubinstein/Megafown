@@ -9,6 +9,6 @@ router.get(/^((?!\/assets\/).)*$/, (req, res) => {
   })
 })
 
-router.post('/new-cast', catchErrors(castController.newCast))
+router.post('/api/new-cast', catchErrors(castController.newCast))
 
 module.exports = router;

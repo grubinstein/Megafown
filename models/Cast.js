@@ -15,7 +15,7 @@ const castSchema = new mongoose.Schema({
             type: String,
             default: 'Point'
         },
-        coordinatess: [{
+        coordinates: [{
             type: Number,
             required: 'You must supply coordinates'
         }]

@@ -11,6 +11,8 @@ mongoose.connection.on('error', (err) => {
 
 
 require('./models/Cast');
+require('babel-core/register');
+require('babel-polyfill');
 
 const app = require('./app');
 app.set('port', env.port || 7777);

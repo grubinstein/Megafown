@@ -1,5 +1,6 @@
 'use strict'
-const prepareForCast = require('./castPrepare');
+const { $ } = require('./modules/bling');
+const prepareForCast = require('./modules/castPrepare');
 require('./main.scss');
 
 
@@ -9,10 +10,11 @@ peer.on('open', function(id) {
 	window.peerid = id;
 });
 
-document.getElementById("call-btn").addEventListener("click", makeCall);
+const callButton = $("#call-btn");
+callButton && callButton.on("click", makeCall);
 
-document.getElementById("cast-btn").addEventListener("click", prepareForCast);
-
+const castButton = $("#cast-btn");
+castButton && castButton.on("click", prepareForCast);
 
 const makeCall = () => {  
 	const remoteId = document.getElementById("remoteID").value;

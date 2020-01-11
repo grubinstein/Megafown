@@ -1,11 +1,18 @@
 const express = require('express');
+const session = require('express-session');
+const mongoose = require('mongoose');
+const MongoStore = require('connect-mongo')(session);
 const bodyParser = require('body-parser');
 const expressSanitizer = require('express-sanitizer');
 const cors = require('cors');
 
 const fs = require('fs');
+const path = require('path')
 const env = JSON.parse(fs.readFileSync('env.json', 'utf8'))
 const routes = require('./routes/index');
+const helpers = require('./helpers');
+
+const flash = require('connect-flash');
 
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
@@ -17,10 +24,13 @@ const castController = require('./controllers/castController');
 
 const app = express();
 
-app.use(bodyParser.json()) // Parse data sent to Express
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
+
+app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-app.use(expressSanitizer()) // Sanitizes input
-app.use(cors()) // Enable CORS
+app.use(expressSanitizer())
+app.use(cors()) 
 
 // Enable webpack in development environment
 if (env.environment === 'development') {
@@ -38,14 +48,26 @@ if (env.environment === 'development') {
   app.use(webpackHotMiddleware(webpackCompiler))
 }
 
+
+app.use(session({
+  secret: env.secret,
+  key: env.key,
+  resave: false,
+  saveUninitialized: false,
+  store: new MongoStore({ mongooseConnection: mongoose.connection, useUnifiedTopology: true })
+}));
+
+app.use(flash());
 // Put your Express code here
 app.use((req, res, next) => {
-  // This is an example middleware
+  res.locals.h = helpers;
+  res.locals.flashes = req.flash();
+  res.locals.currentPath = req.path;
   next()
 })
 
 // Frontend files such as index.html and webpack's bundle.js
-app.use(express.static('public'))
+//app.use(express.static('public'))
 
 // Route everything except /assets to index.html to be parsed by frontend router
 app.use('/', routes);

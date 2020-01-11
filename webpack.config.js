@@ -7,8 +7,7 @@ module.exports = {
     {
       polyfill: 'babel-polyfill',
       app: ['./app/main.js', 'webpack-hot-middleware/client']
-    }
-  ,
+  },
   output: {
     path: path.resolve(__dirname, 'public'),
     publicPath: '/assets/',

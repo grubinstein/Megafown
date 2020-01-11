@@ -3,9 +3,15 @@ const router = express.Router();
 const castController = require('../controllers/castController');
 const { catchErrors } = require('../handlers/errorHandlers');
 
-router.get(/^((?!\/assets\/).)*$/, (req, res) => {
-  res.sendFile('/index.html', {
-    root: 'public'
+router.get("/", (req, res) => {
+  res.render('layout', {
+    title: "Megafown"
+  });
+})
+
+router.get("/speak", (req, res) => {
+  res.render('speak', {
+    title: "Speak"
   })
 })
 

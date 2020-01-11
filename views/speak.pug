@@ -1,0 +1,13 @@
+extends layout
+
+block content
+    .container
+        .row.flex-grow-1
+            .col.my-auto
+                form
+                    .form-group
+                        label(for="castName") Name
+                        input.form-control(type="text" id="castName" placeholder="Enter a name for your cast")
+                        small.form-text.text-muted(id="castNameHelp") This could be the name of your demonstration
+                    button.btn.btn-primary(type="submit") Cast now!
+

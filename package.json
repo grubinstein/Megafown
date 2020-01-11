@@ -1,18 +1,17 @@
 {
-  "name": "express-webpack-boilerplate",
+  "name": "Megafown",
   "version": "1.0.0",
-  "description": "A simple Express + Webpack boilerplate application",
+  "description": "An app to help speakers be heard by more people at demonstrations",
   "main": "index.js",
   "scripts": {
     "start": "nodemon start.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "express",
-    "boilerplate",
-    "webpack"
+    "activism",
+    "demonstrations"
   ],
-  "author": "Timur Kiyivinski",
+  "author": "Gabriel Rubinstein",
   "license": "MIT",
   "dependencies": {
     "@babel/cli": "^7.7.7",
@@ -20,10 +19,14 @@
     "@babel/preset-env": "^7.7.7",
     "axios": "^0.19.1",
     "body-parser": "^1.15.2",
+    "connect-flash": "^0.1.1",
+    "connect-mongo": "^3.2.0",
     "cors": "^2.8.1",
     "express": "^4.14.0",
     "express-sanitizer": "^1.0.1",
-    "mongoose": "^5.8.4"
+    "express-session": "^1.17.0",
+    "mongoose": "^5.8.4",
+    "pug": "^2.0.4"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

@@ -8,3 +8,4 @@ public/*
 # Application config and logs
 env.json
 *.log
+variables.env

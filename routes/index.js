@@ -9,12 +9,12 @@ router.get("/", (req, res) => {
   });
 })
 
-router.get("/speak", (req, res) => {
-  res.render('speak', {
-    title: "Speak"
-  })
-})
+router.get("/speak", castController.speak);
+router.get("/locationError", castController.locationError);
+router.get("/streamError", castController.streamError);
+router.get("/dataError", castController.dataError);
 
-router.post('/api/new-cast', catchErrors(castController.newCast))
+router.post('/api/new-cast', catchErrors(castController.createCast))
+router.post('/api/end-cast', catchErrors(castController.endCast))
 
 module.exports = router;

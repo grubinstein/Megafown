@@ -20,6 +20,10 @@ exports.icon = (name) => fs.readFileSync(`./public/images/icons/${name}.svg`);
 // Some details about the site
 exports.siteName = `Megafown`;
 
+exports.alerts = {
+  "error" : "danger"
+}
+
 exports.menu = [
   { slug: '/speak', title: 'Speak', icon: 'speak', },
   { slug: '/listen', title: 'Listen', icon: 'listen', },

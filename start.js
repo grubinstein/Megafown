@@ -2,6 +2,7 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 
 const env = JSON.parse(fs.readFileSync('env.json', 'utf8'))
+require('dotenv').config({ path: 'variables.env' });
 
 mongoose.connect(env.database, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true});
 mongoose.Promise = global.Promise; // Tell Mongoose to use ES6 promises

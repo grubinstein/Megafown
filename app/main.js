@@ -1,14 +1,16 @@
 'use strict'
-const { $ } = require('./modules/bling');
-const prepareForCast = require('./modules/castPrepare');
 require('./main.scss');
+const { $ } = require('./modules/bling');
+require('./modules/speak');
 
 
 const peer = new Peer();
 
 peer.on('open', function(id) {
-	window.peerid = id;
+	window.peer = peer;
 });
+
+
 
 const callButton = $("#call-btn");
 callButton && callButton.on("click", makeCall);

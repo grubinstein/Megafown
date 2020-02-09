@@ -1,26 +1,22 @@
 extends layout
 
+include mixins/_location
+
 block content
-        .row.flex-grow-1
-            .col.col-sm-10.col-md-8.col-lg-6.col-xl-4.col-centered.my-auto
-                form.cast-form
-                    .form-group
-                        label(for="castName") Name
-                        input.form-control(type="text" id="castName" placeholder="Enter a name for your cast")
-                        small.form-text.text-muted(id="castNameHelp") This could be the name of your demonstration or event.
-                        label(for="location") Location
-                        .input-group.mb-3
-                            input.form-control(type="text" id="location" placeholder="Type to find location")
-                            .input-group-append
-                                button.btn.btn-outline-secondary(type="button" id="currentLocationBtn") Use Current
-                                button.btn.btn-outline-secondary.d-none(type="button" id="enterLocationBtn") Enter Location
-                        small.form-text.text-muted(id="locationHelp") Location is needed to help listeners find your cast.
-                        input(type="hidden" id="lng" name="lng" value="")
-                        input(type="hidden" id="lat" name="lat" value="")
-                    .text-center
-                        button.btn.btn-primary(type="submit" id="castBtn") Broadcast now!
-                .success.my-auto.d-none.justify-content-center
-                    h2.text-success.text-center Broadcasting now!
-                    img.success-image(src="images/broadcast.png")
-                    .text-center
-                        button.btn.btn-danger(type="button" id="stopBtn") Stop broadcast
+    .row.flex-grow-1
+        .col.col-sm-10.col-md-8.col-lg-6.col-xl-4.col-centered.my-auto
+            form.cast-form
+                .form-group
+                    label(for="castName") Name
+                    input.form-control(type="text" id="castName" placeholder="Enter a name for your cast")
+                    small.form-text.text-muted(id="castNameHelp") This could be the name of your demonstration or event.
+                    label(for="location") Location
+                    +location()
+                    small.form-text.text-muted(id="locationHelp") Location is needed to help listeners find your cast.
+                .text-center
+                    button.btn.btn-primary(type="submit" id="castBtn") Broadcast now!
+            .success.my-auto.d-none.justify-content-center
+                h2.text-success.text-center Broadcasting now!
+                img.success-image(src="images/broadcast.png")
+                .text-center
+                    button.btn.btn-danger(type="button" id="stopBtn") Stop broadcast

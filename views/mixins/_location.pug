@@ -1,0 +1,8 @@
+mixin location()
+    .input-group.mb-3.location
+        input.form-control.autocomplete(type="text" id="autocomplete" placeholder="Type to find location")
+        .input-group-append
+            button.btn.btn-outline-secondary(type="button" id="currentLocationBtn") Use Current
+            button.btn.btn-outline-secondary.d-none(type="button" id="enterLocationBtn") Enter Location
+    input(type="hidden" id="lng" name="lng" value="")
+    input(type="hidden" id="lat" name="lat" value="")

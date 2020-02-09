@@ -1,15 +1,23 @@
-function autocomplete(input, latInput, lngInput) {
+import { setLocation } from './location';
+import { $ } from './bling';
+
+console.log("Started autocomplete module")
+
+function autocomplete(input) {
 	if(!input) return;
 	const dropdown = new google.maps.places.Autocomplete(input);
 	
 	dropdown.addListener('place_changed', () => {
 		const place = dropdown.getPlace();
-		latInput.value = place.geometry.location.lat();
-		lngInput.value = place.geometry.location.lng();
+		const coordinates = [
+			place.geometry.location.lat(),
+			place.geometry.location.lng()
+		];
+		setLocation(coordinates);
 	});
 	input.on('keydown', (e) => {
 		if(e.keycode === 13) e.preventDefault();
 	})
 }
 
-export default autocomplete;
+autocomplete($(".autocomplete"));

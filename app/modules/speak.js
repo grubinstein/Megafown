@@ -1,26 +1,9 @@
 require('regenerator-runtime/runtime');
-const axios = require('axios');
-const { $ } = require('./bling');
-import autocomplete from './autocomplete'
-
-autocomplete($("#location"), $("#lat"), $("#lng"));
-
-const getCurrentLocation = () => {
-	navigator.geolocation.getCurrentPosition( (position) => {
-		$("#lat").value = position.coords.latitude;
-		$("#lng").value = position.coords.longitude;
-		toggleLocationBtns();
-	},(err) => {
-		window.location.href = "/locationError"
-	});
-};
-
-const enterLocation = () => {
-	toggleLocationBtns();
-};
+import axios from 'axios';
+import { $ } from './bling';
+import { getLocation } from './location';
 
 const prepareForCast = async () => {
-	//TODO Move peer instantiation here.
 	const [err, stream] = await getAudioStreamPromise();
 	if(err) { console.log(err); window.location.href = "/streamError"; return;}
 	window.localStream = stream;
@@ -44,13 +27,11 @@ const endCast = () => {
 		})
 }
 
-$("#currentLocationBtn").on("click", getCurrentLocation);
-$("#enterLocationBtn").on("click", enterLocation);
-$("#castBtn").on("click", (e) => {
+$("#castBtn") && $("#castBtn").on("click", (e) => {
 	e.preventDefault();
 	prepareForCast();
 });
-$("#stopBtn").on("click", endCast);
+$("#stopBtn") && $("#stopBtn").on("click", endCast);
 
 const toggleSuccess = () => {
 	$(".cast-form").classList.toggle("d-none");
@@ -58,15 +39,13 @@ const toggleSuccess = () => {
 }
 
 
-const sendCastData = () => {
-	return new Promise((resolve, reject) => {
+const sendCastData = async () => {
+	return new Promise(async (resolve, reject) => {
+		const coordinates = getLocation();
 		const cast = {
 			name: $("#castName").value,
 			location: {
-				coordinates: [
-					$("#lng").value,
-					$("#lat").value
-				]
+				coordinates
 			},
 			peerid: window.peer.id
 		}
@@ -104,19 +83,3 @@ const getAudioStreamPromise = () => {
 	})
 	.catch( err => [err] )
 };
-
-
-
-const toggleLocationBtns = () => {
-	const locationInput = $("#location")
-	if(locationInput.placeholder == "Type to find location") {
-		locationInput.placeholder = "Using current location";
-		locationInput.style.backgroundColor = "#CCCCCC";
-	} else {
-		locationInput.placeholder = "Type to find location";
-		locationInput.style.backgroundColor = "#FFFFFF"
-	}
-	locationInput.disabled = !locationInput.disabled;
-	$("#currentLocationBtn").classList.toggle("d-none");
-	$("#enterLocationBtn").classList.toggle("d-none");
-}

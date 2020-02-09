@@ -1,8 +1,8 @@
 'use strict'
-require('./main.scss');
-const { $ } = require('./modules/bling');
-require('./modules/speak');
-
+import './main.scss';
+import './modules/speak';
+import './modules/autocomplete'; 
+import './modules/map';
 
 const peer = new Peer();
 
@@ -10,8 +10,7 @@ peer.on('open', function(id) {
 	window.peer = peer;
 });
 
-
-
+/*
 const callButton = $("#call-btn");
 callButton && callButton.on("click", makeCall);
 
@@ -40,3 +39,4 @@ peer.on('call', (call) => {
 		player.play();
 	})
 })
+*/

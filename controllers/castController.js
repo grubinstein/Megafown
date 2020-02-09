@@ -1,13 +1,6 @@
 const mongoose = require('mongoose');
 const Cast = mongoose.model('Cast');
 
-exports.speak = (req, res) => {
-    res.render('speak', {
-        title: "Speak"
-    });
-}
-
-
 exports.createCast = async (req, res) => {
     const cast = await (new Cast(req.body)).save();
     res.status(201).json(cast);

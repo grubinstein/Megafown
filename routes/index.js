@@ -4,12 +4,23 @@ const castController = require('../controllers/castController');
 const { catchErrors } = require('../handlers/errorHandlers');
 
 router.get("/", (req, res) => {
-  res.render('layout', {
-    title: "Megafown"
-  });
-})
+	res.render('layout', {
+		title: "Megafown"
+	});
+});
 
-router.get("/speak", castController.speak);
+router.get("/listen", (req, res) => {
+	res.render('listen', {
+		title: "Listen"
+	});
+});
+
+router.get("/speak", (req, res) => {
+	res.render('speak', {
+		title: "Speak"
+	});
+});
+
 router.get("/locationError", castController.locationError);
 router.get("/streamError", castController.streamError);
 router.get("/dataError", castController.dataError);

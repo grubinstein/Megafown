@@ -21,15 +21,21 @@ html
 												span #{item.title}
 			block messages
 				.row
+					.inner.col-11.col-centered
+						.flash-messages.client-flash.hidden
+							.alert.alert-danger.alert-dismissible
+								p
+								button.remove-client-flash.close(type="button" aria-label="Close")
+									span(aria-hidden="true") &times;
 					if locals.flashes
 					.inner.col-11.col-centered
 						.flash-messages
 							- const categories = Object.keys(locals.flashes)
 							each category in categories
 								each message in flashes[category]
-										.alert(class=`alert-${h.alerts[category]}`)
+										.alert.alert-dismissable(class=`alert-${h.alerts[category]}`)
 											!= message
-											button.flash__remove(type="button" class="close" data-dismiss="alert" aria-label="Close")
+											button.close(type="button" class="close" data-dismiss="alert" aria-label="Close")
 												span(aria-hidden="true") &times;
 			.row.justify-content-center.flex-grow-1.flex-fill.content
 				block content

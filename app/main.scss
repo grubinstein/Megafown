@@ -11,6 +11,10 @@ input {
     overflow: hidden;
 }
 
+.hidden {
+    display: none;
+}
+
 .show-border {
     border-style: solid;
     border-color: blue;

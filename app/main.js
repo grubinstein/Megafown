@@ -3,6 +3,7 @@ import './main.scss';
 import './modules/speak';
 import './modules/autocomplete'; 
 import './modules/map';
+import { removeFlash } from './modules/flashes'
 
 const peer = new Peer();
 

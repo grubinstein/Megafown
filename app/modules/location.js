@@ -1,4 +1,5 @@
 import { $ } from './bling';
+import { newErrorFlash, removeErrorFlash, catchErrors } from './flashes';
 
 let coordinates;
 
@@ -17,16 +18,14 @@ const getLocation = () => {
     return coordinates;
 }
 
-const getDeviceLocation = () => {
+const getDeviceLocation = () => new Promise( (resolve, reject) => {
     navigator.geolocation.getCurrentPosition(position => {
-        console.log(this);
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        coordinates = [lat, lng];
+        coordinates = [position.coords.latitude, position.coords.longitude];
         setLocation(coordinates);
         toggleLocationBtns();
-    });
-}
+        resolve();
+    }, reject);
+});
 
 const toggleLocationBtns = () => {
     const locationInput = $(".autocomplete")
@@ -35,6 +34,7 @@ const toggleLocationBtns = () => {
         locationInput.style.backgroundColor = "#CCCCCC";
     } else {
         locationInput.placeholder = "Type to find location";
+        locationInput.value = null;
         locationInput.style.backgroundColor = "#FFFFFF"
     }
     locationInput.disabled = !locationInput.disabled;
@@ -42,7 +42,7 @@ const toggleLocationBtns = () => {
     $("#enterLocationBtn").classList.toggle("d-none");
 }
 
-$("#currentLocationBtn") && $("#currentLocationBtn").on("click", getDeviceLocation);
+$("#currentLocationBtn") && $("#currentLocationBtn").on("click", catchErrors(getDeviceLocation));
 $("#enterLocationBtn") && $("#enterLocationBtn").on("click", toggleLocationBtns);
 
 export { setLocation, getLocation };

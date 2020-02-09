@@ -1,54 +1,45 @@
+'use strict'
 require('regenerator-runtime/runtime');
 import axios from 'axios';
 import { $ } from './bling';
 import { getLocation } from './location';
+import { newErrorFlash, removeErrorFlash, catchErrors } from './flashes';
+import { createPeer, destroyPeer, getAudioStream } from './peer';
+
+let castId;
 
 const prepareForCast = async () => {
-	const [err, stream] = await getAudioStreamPromise();
-	if(err) { console.log(err); window.location.href = "/streamError"; return;}
-	window.localStream = stream;
-
-	sendCastData()
-		.then((cast) => {
-			window.castId = cast._id;
-			toggleSuccess();
-		})
-		.catch((err) => { console.log(err); window.location.href = "/dataError"; });
+	const [ peerId ] =  await Promise.all([ createPeer(), getAudioStream() ]);
+	const cast = await sendCastData(peerId);
+	castId = cast._id;
+	toggleSuccess();
 }
 
-const endCast = () => {
-	window.peer.destroy();
-	axios.post("/api/end-cast", { id: window.castId })
-		.then( () => {
-			toggleSuccess();
-		})
-		.catch( (err) => {
-
-		})
+const endCast = async () => {
+	destroyPeer();
+	deleteCast();
+	toggleSuccess();
 }
 
 $("#castBtn") && $("#castBtn").on("click", (e) => {
 	e.preventDefault();
-	prepareForCast();
+	catchErrors(prepareForCast, {
+		msg: "Error occurred while preparing cast. Did you provide permission to use audio?",
+		onFail: destroyPeer
+	})();
 });
-$("#stopBtn") && $("#stopBtn").on("click", endCast);
 
-const toggleSuccess = () => {
-	$(".cast-form").classList.toggle("d-none");
-	$(".success").classList.toggle("d-none");
-}
+$("#stopBtn") && $("#stopBtn").on("click", catchErrors(endCast, {msg: "Error occured while deleting cast"} ));
 
-
-const sendCastData = async () => {
+const sendCastData = async (peerId) => {
 	return new Promise(async (resolve, reject) => {
-		const coordinates = getLocation();
 		const cast = {
 			name: $("#castName").value,
 			location: {
-				coordinates
+				coordinates: getLocation()
 			},
-			peerid: window.peer.id
-		}
+			peerId
+		};
 		
 		axios.post('/api/new-cast', cast)
 			.then((response) => {
@@ -64,22 +55,11 @@ const sendCastData = async () => {
 	})
 }
 
-const getCastName = () => {
-	return document.getElementById("castName").value;
+const toggleSuccess = () => {
+	$(".cast-form").classList.toggle("d-none");
+	$(".success").classList.toggle("d-none");
 }
 
-const getAudioStreamPromise = () => {
-	return (
-		new Promise((resolve, reject) => {
-			const getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || (navigator.mediaDevices && navigator.mediaDevices.getUserMedia)).bind(navigator);
-			getUserMedia({video: false, audio:true}, (stream) => {
-				resolve(stream);
-			}, (err) => {
-				reject(err);
-			});
-		})
-	).then( data => {
-		return [null, data];
-	})
-	.catch( err => [err] )
-};
+const deleteCast = async () => {
+	await axios.post("/api/end-cast", { id: castId })
+}

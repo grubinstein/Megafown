@@ -21,10 +21,6 @@ router.get("/speak", (req, res) => {
 	});
 });
 
-router.get("/locationError", castController.locationError);
-router.get("/streamError", castController.streamError);
-router.get("/dataError", castController.dataError);
-
 router.post('/api/new-cast', catchErrors(castController.createCast))
 router.post('/api/end-cast', catchErrors(castController.endCast))
 

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Cast = mongoose.model('Cast');
 
 exports.createCast = async (req, res) => {
+    console.log(req.body);
     const cast = await (new Cast(req.body)).save();
     res.status(201).json(cast);
 }

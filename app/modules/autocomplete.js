@@ -1,8 +1,6 @@
 import { setLocation } from './location';
 import { $ } from './bling';
 
-console.log("Started autocomplete module")
-
 function autocomplete(input) {
 	if(!input) return;
 	const dropdown = new google.maps.places.Autocomplete(input);

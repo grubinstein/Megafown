@@ -55,11 +55,15 @@ function makeMap(mapDiv) {
     const map = new google.maps.Map(mapDiv, mapOptions);
 
     $(".location").on("locationChanged", (event) => {
-        const coordinates = event.detail.coordinates;
-        map.setCenter({
-            lat: coordinates[0],
-            lng: coordinates[1]
-        });
+        const coordinates = {
+            lat: event.detail.coordinates[0],
+            lng: event.detail.coordinates[1]
+        };
+        map.setCenter(coordinates);
+        const casts = axios.post('/api/nearby-casts', coordinates)
+            .then( response => {
+                console.log(response);
+            });
     });
     /*loadPlaces(map);
 

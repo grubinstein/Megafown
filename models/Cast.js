@@ -26,4 +26,6 @@ const castSchema = new mongoose.Schema({
     }
 });
 
+castSchema.index({ location: '2dsphere' });
+
 module.exports = mongoose.model('Cast', castSchema);

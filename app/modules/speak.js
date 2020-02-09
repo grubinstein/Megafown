@@ -33,10 +33,14 @@ $("#stopBtn") && $("#stopBtn").on("click", catchErrors(endCast, {msg: "Error occ
 
 const sendCastData = async (peerId) => {
 	return new Promise(async (resolve, reject) => {
+		const coords = getLocation();
 		const cast = {
 			name: $("#castName").value,
 			location: {
-				coordinates: getLocation()
+				coordinates: [
+					coords[1],
+					coords[0]
+				]
 			},
 			peerId
 		};

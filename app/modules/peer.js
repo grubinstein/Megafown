@@ -17,8 +17,8 @@ const destroyPeer = () => {
 
 const getAudioStream = () => new Promise((resolve, reject) => {
 	const getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || (navigator.mediaDevices && navigator.mediaDevices.getUserMedia)).bind(navigator);
-	getUserMedia({video: false, audio:true}, (returnedStream) => {
-        stream = returnedStream;
+	getUserMedia({video: false, audio:true}, (s) => {
+        stream = s;
 		resolve();
 	}, (err) => {
 		reject(err);

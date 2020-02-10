@@ -8,27 +8,31 @@ const mapOptions = {
 // could get location from navigator.geolocation.getCurrentPosition
 
 function loadPlaces(map, lat = 43.2, lng = -79.8) {
-    /*axios.get(`/api/stores/near?lat=${lat}&lng=${lng}`)
+    axios.post('/api/nearby-casts', {
+        lat,
+        lng
+    })
         .then(res => {
-            const places = res.data;
-            if(!places.length) {
-                alert('no places found!');
+            const casts = res.data;
+            if(!casts.length) {
+                alert('no casts found!');
                 return;
             }
 
-            const bounds = new google.maps.LatLngBounds();
+            let bounds = new google.maps.LatLngBounds();
             const infoWindow = new google.maps.InfoWindow();
+            bounds.extend({lat, lng})
 
-            const markers = places.map(place => {
-                const [placeLng, placeLat] = place.location.coordinates;
-                const position = { lat: placeLat, lng: placeLng };
+            const markers = casts.map(cast => {
+                const [castLng, castLat] = cast.location.coordinates;
+                const position = { lat: castLat, lng: castLng };
                 bounds.extend(position);
                 const marker = new google.maps.Marker( { map, position });
-                marker.place = place;
+                marker.place = cast;
                 return marker;
             });
 
-
+/*
             //when someone clicks on a marker show details of that place
             markers.forEach(marker => marker.addListener('click', function() {
                 const html = `
@@ -43,12 +47,26 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
                 infoWindow.setContent(html);
                 infoWindow.open(map, this);
             }));
-
-            map.setCenter(bounds.getCenter());
+*/ 
+            const center = bounds.getCenter();
+            map.setCenter(center);
+            const span = bounds.toSpan();
+            if(span.lat() < 0.02 || span.lng() < 0.01) {
+                bounds = new LatLngBounds([
+                    {
+                        lat: center.Lat() - 0.005,
+                        lng: center.Lng() - 0.005
+                    },
+                    {
+                        lat: center.Lat() + 0.005,
+                        lng: center.Lng() + 0.005
+                    }
+                ])
+            }
             map.fitBounds(bounds);
         })
         .catch(console.error);
-    */
+    
 }
 
 function makeMap(mapDiv) {
@@ -59,6 +77,7 @@ function makeMap(mapDiv) {
             lat: event.detail.coordinates[0],
             lng: event.detail.coordinates[1]
         };
+        loadPlaces(map, event.detail.coordinates[0], event.detail.coordinates[1]);
         map.setCenter(coordinates);
         const casts = axios.post('/api/nearby-casts', coordinates)
             .then( response => {

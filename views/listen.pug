@@ -3,11 +3,11 @@ extends layout
 include mixins/_location
 
 block content
-	.map.col-12.col-md-6.flex-column.d-flex
+	.map.col-12.col-md-6.flex-column.d-flex.h-100
 		.row
 			.flex-fill
 				+location()
 		.row.flex-grow-1
 			#map
 				p Loading Map...
-	.results.col-12.col-md-6
+	.results.col-12.col-md-6.flex-column.d-flex

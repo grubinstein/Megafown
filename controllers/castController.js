@@ -21,7 +21,7 @@ exports.nearbyCasts = async (req, res) => {
                     type: 'Point',
                     coordinates
                 },
-                $maxDistance: 5000
+                $maxDistance: 2000
             }
         }
     };

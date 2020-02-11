@@ -25,6 +25,6 @@ exports.nearbyCasts = async (req, res) => {
             }
         }
     };
-    const casts = await Cast.find(query).select('name location peerId');
+    const casts = await Cast.find(query).select('name location peerId created');
     res.json(casts);
 }

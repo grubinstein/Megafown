@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { $ } from './bling';
+import { $, $$ } from './bling';
 
 const mapOptions = {
     center: { lat: 43.2, lng: -79.8 },
@@ -35,16 +35,47 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
             });
             
             bounds.extend({lat, lng})
-
-            const markers = casts.map(cast => {
+            
+            const listItems = casts.map(cast => {
+                const listItem = document.createElement("li");
+                listItem.className = "list-group-item ";
+                listItem.innerHTML = "<p>" + cast.name + "<p>";
+                $(".list-group").appendChild(listItem);
+                return listItem;
+            })
+            
+            const markers = casts.map((cast,i) => {
                 const [castLng, castLat] = cast.location.coordinates;
                 const position = { lat: castLat, lng: castLng };
                 bounds.extend(position);
-                const marker = new google.maps.Marker( { map, position });
+                const marker = new google.maps.Marker( { 
+                    map, 
+                    position,
+                    icon: 'http://maps.gstatic.com/mapfiles/markers2/marker.png'
+                });
                 marker.place = cast;
+                marker.addListener('click', function() {
+                    markers.forEach(marker => {
+                        marker.setIcon('http://maps.gstatic.com/mapfiles/markers2/marker.png');
+                    });
+                    this.setIcon('//maps.gstatic.com/mapfiles/markers2/icon_green.png');
+                    $$(".list-group-item").forEach(el => el.classList.remove("active"));
+                    listItems[i].classList.add("active");
+                });
                 return marker;
             });
 
+            listItems.forEach((listItem,i) => {
+                listItem.on('click', function() {
+                    markers.forEach(marker => {
+                        marker.setIcon('http://maps.gstatic.com/mapfiles/markers2/marker.png');
+                    });
+                    markers[i].setIcon('//maps.gstatic.com/mapfiles/markers2/icon_green.png');
+                    $$(".list-group-item").forEach(el => el.classList.remove("active"));
+                    this.classList.add("active");
+                })
+            })
+            
 /*
             //when someone clicks on a marker show details of that place
             markers.forEach(marker => marker.addListener('click', function() {

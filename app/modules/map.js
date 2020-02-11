@@ -21,18 +21,6 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
 
             let bounds = new google.maps.LatLngBounds();
             const infoWindow = new google.maps.InfoWindow();
-            var userLocation = new google.maps.Marker({
-                clickable: false,
-                position: new google.maps.LatLng(lat, lng),
-                icon: new google.maps.MarkerImage('//maps.gstatic.com/mapfiles/mobile/mobileimgs2.png',
-                                                    new google.maps.Size(22,22),
-                                                    new google.maps.Point(0,18),
-                                                    new google.maps.Point(11,11)),
-                shadow: null,
-                zIndex: 999,
-                map
-            });
-
             bounds.extend({lat, lng})
 
             const markers = casts.map(cast => {
@@ -62,7 +50,20 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
 */ 
             const center = bounds.getCenter();
             map.setCenter(center);
-            map.fitBounds(bounds, 15);
+            const span = bounds.toSpan();
+            if(span.lat() < 0.02 || span.lng() < 0.01) {
+                bounds = new LatLngBounds([
+                    {
+                        lat: center.Lat() - 0.005,
+                        lng: center.Lng() - 0.005
+                    },
+                    {
+                        lat: center.Lat() + 0.005,
+                        lng: center.Lng() + 0.005
+                    }
+                ])
+            }
+            map.fitBounds(bounds);
         })
         .catch(console.error);
     

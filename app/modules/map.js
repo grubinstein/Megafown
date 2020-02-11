@@ -22,7 +22,7 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
             let bounds = new google.maps.LatLngBounds();
             const infoWindow = new google.maps.InfoWindow();
             
-            var myloc = new google.maps.Marker({
+            var myLocation = new google.maps.Marker({
                 clickable: false,
                 position: new google.maps.LatLng(lat, lng),
                 icon: new google.maps.MarkerImage('//maps.gstatic.com/mapfiles/mobile/mobileimgs2.png',
@@ -34,7 +34,7 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
                 map
             });
             
-            bounds.extend({lat, lng})
+            bounds.extend({lat, lng});
             
             const listItems = casts.map(cast => {
                 const listItem = document.createElement("li");

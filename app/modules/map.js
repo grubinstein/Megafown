@@ -39,8 +39,10 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
             const listItems = casts.map(cast => {
                 const listItem = document.createElement("li");
                 listItem.className = "list-group-item";
-                listItem.innerHTML = "<p>" + cast.name + "<p>"
-                + "<p>Started " + moment(cast.created).fromNow() + "<p>";
+                listItem.innerHTML = `
+                                        <p><strong>${cast.name}</strong></p>
+                                        <p>Started ${moment(cast.created).fromNow()}</p>
+                                    `;
                 $(".list-group").appendChild(listItem);
                 return listItem;
             })
@@ -54,15 +56,27 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
                     position,
                     icon: 'http://maps.gstatic.com/mapfiles/markers2/marker.png'
                 });
-                marker.place = cast;
+                marker.cast = cast;
                 marker.addListener('click', function() {
                     markers.forEach(marker => {
                         marker.setIcon('http://maps.gstatic.com/mapfiles/markers2/marker.png');
                     });
                     this.setIcon('//maps.gstatic.com/mapfiles/markers2/icon_green.png');
+
+                    const html = `
+                        <div class="popup">
+                            <p><strong>${this.cast.name}</strong></p>
+                            <p>Created ${moment(this.cast.created).fromNow()}</p>
+                        </div>
+                    `;
+                    infoWindow.setContent(html);
+                    infoWindow.open(map, this);
+                    
                     $$(".list-group-item").forEach(el => el.classList.remove("active"));
                     listItems[i].classList.add("active");
                 });
+                marker.addListener('click', function() {
+            })
                 return marker;
             });
 

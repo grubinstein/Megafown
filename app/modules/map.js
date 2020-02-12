@@ -19,33 +19,13 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
                 return;
             }
 
-            let bounds = new google.maps.LatLngBounds();
+            const bounds = new google.maps.LatLngBounds();
             const infoWindow = new google.maps.InfoWindow();
             
-            var myLocation = new google.maps.Marker({
-                clickable: false,
-                position: new google.maps.LatLng(lat, lng),
-                icon: new google.maps.MarkerImage('//maps.gstatic.com/mapfiles/mobile/mobileimgs2.png',
-                                                    new google.maps.Size(22,22),
-                                                    new google.maps.Point(0,18),
-                                                    new google.maps.Point(11,11)),
-                shadow: null,
-                zIndex: 999,
-                map
-            });
-            
+            addMyLocationToMap(new google.maps.LatLng(lat, lng), map);
             bounds.extend({lat, lng});
             
-            const listItems = casts.map(cast => {
-                const listItem = document.createElement("li");
-                listItem.className = "list-group-item";
-                listItem.innerHTML = `
-                                        <p><strong>${cast.name}</strong></p>
-                                        <p>Started ${moment(cast.created).fromNow()}</p>
-                                    `;
-                $(".list-group").appendChild(listItem);
-                return listItem;
-            })
+            const listItems = casts.map(createListItem);
             
             const markers = casts.map((cast,i) => {
                 const [castLng, castLat] = cast.location.coordinates;
@@ -91,28 +71,37 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
                 })
             })
             
-/*
-            //when someone clicks on a marker show details of that place
-            markers.forEach(marker => marker.addListener('click', function() {
-                const html = `
-                    <div class="popup">
-                        <a href="/store/${this.place.slug}">
-                            <img src="/uploads/${this.place.photo || 'store.png'}" alt="${this.place.name}" />
-                            <p> ${this.place.name} - ${this.place.location.address}</p>
-                        </a>
-                    </div>
-                `;
-                
-                infoWindow.setContent(html);
-                infoWindow.open(map, this);
-            }));
-*/ 
             const center = bounds.getCenter();
             map.setCenter(center);
             map.fitBounds(bounds, 15);
         })
         .catch(console.error);
     
+}
+
+function addMyLocationToMap(position, map) {
+    var myLocation = new google.maps.Marker({
+                clickable: false,
+                position,
+                icon: new google.maps.MarkerImage('//maps.gstatic.com/mapfiles/mobile/mobileimgs2.png',
+                                                    new google.maps.Size(22,22),
+                                                    new google.maps.Point(0,18),
+                                                    new google.maps.Point(11,11)),
+                shadow: null,
+                zIndex: 999,
+                map
+            });
+}
+
+function createListItem(cast) {
+    const listItem = document.createElement("li");
+    listItem.className = "list-group-item";
+    listItem.innerHTML = `
+                            <p><strong>${cast.name}</strong></p>
+                            <p>Started ${moment(cast.created).fromNow()}</p>
+                        `;
+    $(".list-group").appendChild(listItem);
+    return listItem;
 }
 
 function makeMap(mapDiv) {

@@ -38,8 +38,9 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
             
             const listItems = casts.map(cast => {
                 const listItem = document.createElement("li");
-                listItem.className = "list-group-item ";
-                listItem.innerHTML = "<p>" + cast.name + "<p>";
+                listItem.className = "list-group-item";
+                listItem.innerHTML = "<p>" + cast.name + "<p>"
+                + "<p>Started " + moment(cast.created).fromNow() + "<p>";
                 $(".list-group").appendChild(listItem);
                 return listItem;
             })

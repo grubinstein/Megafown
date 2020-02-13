@@ -13,8 +13,8 @@ function makeMap(mapDiv) {
 
     $(".location").on("locationChanged", (event) => {
         const [ lat, lng ] = event.detail.coordinates;
-        clearCasts();
 
+        clearCasts();
         fetchCasts(lat, lng)
             .then(res => loadCasts(res.data, map, lat, lng));
     });
@@ -95,8 +95,15 @@ const createListItem = (cast, i) => {
     const listItem = document.createElement("li");
     listItem.className = "list-group-item";
     listItem.innerHTML = `
-                            <p><strong>${cast.name}</strong></p>
-                            <p>Started ${moment(cast.created).fromNow()}</p>
+                            <div class="row">
+                                <div class="col">
+                                    <p><strong>${cast.name}</strong></p>
+                                    <p>Started ${moment(cast.created).fromNow()}</p>
+                                </div>
+                                <div class="col-3 my-auto">
+                                    <button class="btn btn-outline-primary" data-cast-id=${cast._id}>Connect
+                                </div>
+                            </div>
                         `;    
     listItem.cast = cast;                    
     listItem.castIndex = i;
@@ -110,24 +117,28 @@ const createListItem = (cast, i) => {
 }    
 
 const selectCast = (clicked) => {
+    const cast = clicked.cast;
+    const marker = markers[clicked.castIndex];
+    const listItem = listItems[clicked.castIndex];
+    
     markers.forEach(marker => {
         marker.setIcon('http://maps.gstatic.com/mapfiles/markers2/marker.png');
     });        
 
-    const marker = markers[clicked.castIndex];
     marker.setIcon('//maps.gstatic.com/mapfiles/markers2/icon_green.png');
     
     const html = `
-                    <div class="popup">
-                    <p><strong>${clicked.cast.name}</strong></p>
-                    <p>Created ${moment(clicked.cast.created).fromNow()}</p>
+                    <div class="popup" style="text-align: center">
+                        <p><strong>${cast.name}</strong></p>
+                        <p>Created ${moment(cast.created).fromNow()}</p>
+                        <button class="cast-connect btn btn-outline-primary btn-sm" data-cast-id=${cast._id}>Connect</button>
                     </div>
                 `;    
     infoWindow.setContent(html);            
     infoWindow.open(map, marker);
     
     $$(".list-group-item").forEach(el => el.classList.remove("active"));
-    listItems[clicked.castIndex].classList.add("active");
+    listItem.classList.add("active");
 }    
 
 export default makeMap

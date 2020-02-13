@@ -2,10 +2,8 @@
 require('regenerator-runtime/runtime');
 import { $ } from './bling';
 
-const catchErrors = (fn, options) => async () => {
-    if(options) {
-        const { msg, onFail } = options;
-    };
+const catchErrors = (fn, options) => async () => {    
+    const { msg, onFail } = options;
     removeErrorFlash();
     return await fn(...arguments).catch(err => {
         onFail && onFail();

@@ -15,6 +15,10 @@ input {
     display: none;
 }
 
+.showing {
+    display: block;
+}
+
 .show-border {
     border-style: solid;
     border-color: blue;

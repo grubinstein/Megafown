@@ -19,14 +19,14 @@ const newErrorFlash = (err, msg) => {
     const flashDiv = $(".client-flash");
     const text = $(".client-flash > .alert > p")
     text.innerText = msg || err.message || err;
-    flashDiv.classList.remove('hidden');
+    flashDiv.classList.add('showing');
     $(".remove-client-flash").on("click", removeErrorFlash);
 }
 
 const removeErrorFlash = () => {
     const flashDiv = $(".client-flash");
     const text = $(".client-flash > .alert > p")
-    flashDiv.classList.add("hidden");
+    flashDiv.classList.remove("showing");
     text.innerText = "";
 }
 

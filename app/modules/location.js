@@ -42,7 +42,7 @@ const toggleLocationBtns = () => {
     $("#enterLocationBtn").classList.toggle("d-none");
 }
 
-$("#currentLocationBtn") && $("#currentLocationBtn").on("click", catchErrors(getDeviceLocation));
+$("#currentLocationBtn") && $("#currentLocationBtn").on("click", catchErrors(getDeviceLocation, { msg: "Error getting location. You may need to give permission."}));
 $("#enterLocationBtn") && $("#enterLocationBtn").on("click", toggleLocationBtns);
 
 export { setLocation, getLocation };

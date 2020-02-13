@@ -125,6 +125,4 @@ function makeMap(mapDiv) {
     });
 };
 
-$('#map') && makeMap($('#map'));
-
 export default makeMap

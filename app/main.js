@@ -2,14 +2,9 @@
 import './main.scss';
 import './modules/speak';
 import './modules/autocomplete'; 
-import './modules/map';
+import makeMap from './modules/map';
 import { removeFlash } from './modules/flashes'
 
-const peer = new Peer();
-
-peer.on('open', function(id) {
-	window.peer = peer;
-});
 
 /*
 const callButton = $("#call-btn");

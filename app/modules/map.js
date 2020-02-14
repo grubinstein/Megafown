@@ -127,9 +127,7 @@ const selectCast = (i) => {
     showPopupOnMap(marker, map);
     
     $$(".list-group-item").forEach(el => el.classList.remove("active"));
-    $$(".list-group-item > btn").forEach(el => el.classList.remove("btn-invert"));
     listItem.classList.add("active");
-    $(`#list-item-${i}`).classList.add("btn-invert");
 }    
 
 const showPopupOnMap = (marker, map) => {

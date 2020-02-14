@@ -124,7 +124,13 @@ const selectCast = (i) => {
     });        
 
     marker.setIcon('//maps.gstatic.com/mapfiles/markers2/icon_green.png');
+    showPopupOnMap(marker, map);
     
+    $$(".list-group-item").forEach(el => el.classList.remove("active"));
+    listItem.classList.add("active");
+}    
+const showPopupOnMap = (marker, map) => {
+    const cast = marker.cast;
     const html = `
                     <div class="popup" style="text-align: center">
                         <p><strong>${cast.name}</strong></p>
@@ -134,9 +140,6 @@ const selectCast = (i) => {
                 `;    
     infoWindow.setContent(html);            
     infoWindow.open(map, marker);
-    
-    $$(".list-group-item").forEach(el => el.classList.remove("active"));
-    listItem.classList.add("active");
 }    
 
 export default makeMap

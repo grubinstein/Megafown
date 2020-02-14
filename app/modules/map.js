@@ -44,6 +44,7 @@ const loadCasts = ( casts, map, lat, lng ) => {
     addSearchLocationToMap(lat, lng, map, bounds);
     
     casts.forEach((cast,i) => {
+        cast.index = i;
         markers[i] = createMarker(cast, i, map, bounds);
         listItems[i] = createListItem(cast, i);
     });        
@@ -82,10 +83,9 @@ const createMarker = (cast, i, map, bounds) => {
         icon: 'http://maps.gstatic.com/mapfiles/markers2/marker.png'
     });        
     marker.cast = cast;
-    marker.castIndex = i;
 
     marker.addListener('click', function() {
-        selectCast(this);        
+        selectCast(this.cast.index);        
     });        
     
     return marker;
@@ -106,20 +106,18 @@ const createListItem = (cast, i) => {
                             </div>
                         `;    
     listItem.cast = cast;                    
-    listItem.castIndex = i;
 
     listItem.on('click', function() {
-        selectCast(this);
+        selectCast(this.cast.index);
     })    
 
     $(".list-group").appendChild(listItem);
     return listItem;
 }    
 
-const selectCast = (clicked) => {
-    const cast = clicked.cast;
-    const marker = markers[clicked.castIndex];
-    const listItem = listItems[clicked.castIndex];
+const selectCast = (i) => {
+    const marker = markers[i];
+    const listItem = listItems[i];
     
     markers.forEach(marker => {
         marker.setIcon('http://maps.gstatic.com/mapfiles/markers2/marker.png');

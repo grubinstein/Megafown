@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { $, $$ } from './bling';
+import { connectToCast } from './listen';
 const markers = [];
 const listItems = [];
 const infoWindow = new google.maps.InfoWindow();
@@ -52,6 +53,10 @@ const loadCasts = ( casts, map, lat, lng ) => {
     const center = bounds.getCenter();
     map.setCenter(center);
     map.fitBounds(bounds, 15);
+
+    $$(".cast-connect").on('click', function() {
+        connectToCast(this.dataset.castId);
+    });
 };        
 
 const addSearchLocationToMap = (lat, lng, map, bounds) => {
@@ -101,7 +106,7 @@ const createListItem = (cast, i) => {
                                     <p>Started ${moment(cast.created).fromNow()}</p>
                                 </div>
                                 <div class="col-3 my-auto">
-                                    <button class="btn btn-outline-primary" id="list-item-${i}" data-cast-id=${cast._id}>Connect
+                                    <button class="cast-connect btn btn-outline-primary" id="list-item-${i}" data-cast-id=${cast._id}>Connect
                                 </div>
                             </div>
                         `;    

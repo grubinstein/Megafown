@@ -101,7 +101,7 @@ const createListItem = (cast, i) => {
                                     <p>Started ${moment(cast.created).fromNow()}</p>
                                 </div>
                                 <div class="col-3 my-auto">
-                                    <button class="btn btn-outline-primary" data-cast-id=${cast._id}>Connect
+                                    <button class="btn btn-outline-primary" id="list-item-${i}" data-cast-id=${cast._id}>Connect
                                 </div>
                             </div>
                         `;    
@@ -127,8 +127,11 @@ const selectCast = (i) => {
     showPopupOnMap(marker, map);
     
     $$(".list-group-item").forEach(el => el.classList.remove("active"));
+    $$(".list-group-item > btn").forEach(el => el.classList.remove("btn-invert"));
     listItem.classList.add("active");
+    $(`#list-item-${i}`).classList.add("btn-invert");
 }    
+
 const showPopupOnMap = (marker, map) => {
     const cast = marker.cast;
     const html = `
@@ -140,6 +143,6 @@ const showPopupOnMap = (marker, map) => {
                 `;    
     infoWindow.setContent(html);            
     infoWindow.open(map, marker);
-}    
+}
 
 export default makeMap

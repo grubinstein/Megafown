@@ -6,6 +6,11 @@ const peerSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    tier: {
+        type: Number,
+        min: 0,
+        default: 0
+    }
     peerId: {
         type: String,
         required: "You must supply a peer ID"

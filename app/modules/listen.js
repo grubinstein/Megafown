@@ -1,9 +1,10 @@
 import axios from 'axios';
-import { createPeer } from './peer';
+import { createPeer, connectToPeer } from './peer';
 
 const connectToCast = async (castID) => {
-    const localPeer = await createPeer();
+    await createPeer();
     const remotePeerID = await getRemotePeerID(castID);
+    connectToPeer(remotePeerID);
 };
 
 const getRemotePeerID = async (castID) => { 

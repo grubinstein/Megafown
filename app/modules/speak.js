@@ -8,6 +8,14 @@ import { createPeer, destroyPeer, getAudioStream } from './peer';
 
 let castId;
 
+$("#castBtn") && $("#castBtn").on("click", async (e) => {
+	e.preventDefault();
+	await catchErrors(prepareForCast, {
+		msg: "Error occurred while preparing cast. Did you provide permission to use audio? Have you given your location?",
+		onFail: destroyPeer
+	})();
+});
+
 const prepareForCast = async () => {
 	const [ peerId ] =  await Promise.all([ createPeer(), getAudioStream() ]);
 	const cast = await sendCastData(peerId);
@@ -17,23 +25,15 @@ const prepareForCast = async () => {
 
 const endCast = async () => {
 	destroyPeer();
-	deleteCast();
+	await deleteCast();
 	toggleSuccess();
 }
-
-$("#castBtn") && $("#castBtn").on("click", (e) => {
-	e.preventDefault();
-	catchErrors(prepareForCast, {
-		msg: "Error occurred while preparing cast. Did you provide permission to use audio?",
-		onFail: destroyPeer
-	})();
-});
 
 $("#stopBtn") && $("#stopBtn").on("click", catchErrors(endCast, {msg: "Error occured while deleting cast"} ));
 
 const sendCastData = async (peerId) => {
-	return new Promise(async (resolve, reject) => {
 		const coords = getLocation();
+
 		const cast = {
 			name: $("#castName").value,
 			location: {
@@ -45,18 +45,15 @@ const sendCastData = async (peerId) => {
 			peerId
 		};
 		
-		axios.post('/api/new-cast', cast)
-			.then((response) => {
-				if(response.status == 201) {
-					resolve(response.data) 
-				} else {
-					reject("Failed with status " + response.status);
-				}
-			})
-			.catch((err) =>  {
-				reject(err)
-			});
-	})
+		const response = await axios.post('/api/new-cast', cast);
+
+		if (response.status === 201) {
+			return response.data;
+		} 
+
+		const err = new Error("Failed with status " + response.status);
+		err.specific = true;
+		throw err;
 }
 
 const toggleSuccess = () => {

@@ -15,6 +15,11 @@ const setLocation = (newCoordinates) => {
 }
 
 const getLocation = () => {
+    if(!coordinates) {
+        const err = new Error("You need to provide your location");
+        err.specific = true;
+        throw err;
+    }
     return coordinates;
 }
 

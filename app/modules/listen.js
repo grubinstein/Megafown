@@ -4,7 +4,6 @@ import { createPeer } from './peer';
 const connectToCast = async (castID) => {
     const localPeer = await createPeer();
     const remotePeerID = await getRemotePeerID(castID);
-    console.log(remotePeerID);
 };
 
 const getRemotePeerID = async (castID) => { 

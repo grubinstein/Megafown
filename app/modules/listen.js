@@ -1,11 +1,12 @@
 import axios from 'axios';
 
-const connectToCast = (castID) => {
-    axios.get('/api/broker-connection',{
+const connectToCast = async (castID) => {
+    const peer = await axios.get('/api/broker-connection',{
         params: {
             castID 
         }
-    })
+    });
+    console.log(peer);
 }
 
 export { connectToCast };

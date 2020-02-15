@@ -11,6 +11,6 @@ exports.brokerConnection = async (req, res) => {
     }, {
         new: true,
         sort: { tier: 1 }
-    })
+    });
     res.status(200).json(peer);
 }

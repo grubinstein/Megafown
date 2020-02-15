@@ -12,6 +12,7 @@ mongoose.connection.on('error', (err) => {
 
 
 require('./models/Cast');
+require('./models/Peer');
 require('babel-core/register');
 require('babel-polyfill');
 

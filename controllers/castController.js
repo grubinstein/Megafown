@@ -1,8 +1,14 @@
 const mongoose = require('mongoose');
 const Cast = mongoose.model('Cast');
+const Peer = mongoose.model('Peer');
 
 exports.createCast = async (req, res) => {
     const cast = await (new Cast(req.body)).save();
+    await (new Peer({
+        peerId: req.body.peerId,
+        remotePeerId: "Source",
+        cast: cast._id,
+    })).save();
     res.status(201).json(cast);
 }
 

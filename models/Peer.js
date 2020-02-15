@@ -22,7 +22,7 @@ const peerSchema = new mongoose.Schema({
     downstreamPeers: {
         type: Number,
         min: 0,
-        man: 2,
+        max: 2,
         default: 0
     }
 });

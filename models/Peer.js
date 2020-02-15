@@ -32,6 +32,6 @@ const peerSchema = new mongoose.Schema({
     }
 });
 
-peerSchema.index({ cast: 1, tier: 1 }, { partialFilterExpression: { downstreamPeers: { $lt: 2 }}};
+peerSchema.index({ cast: 1, connected: 1 }, { partialFilterExpression: { downstreamPeers: { $lt: 2 }}};
 
 module.exports = mongoose.model('Peer', peerSchema);

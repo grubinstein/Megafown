@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { $, $$ } from './bling';
 import { connectToCast } from './listen';
+import { catchErrors } from './flashes';
 const markers = [];
 const listItems = [];
 const infoWindow = new google.maps.InfoWindow();
@@ -55,7 +56,7 @@ const loadCasts = ( casts, map, lat, lng ) => {
     map.fitBounds(bounds, 15);
 
     $$(".cast-connect").on('click', function() {
-        connectToCast(this.dataset.castId);
+        catchErrors(connectToCast)(this.dataset.castId);
     });
 };        
 

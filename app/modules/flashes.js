@@ -15,17 +15,17 @@ const newErrorFlash = (err, msg) => {
     console.log(err);
     removeErrorFlash();
     const flashDiv = $(".client-flash");
-    const text = $(".client-flash > .alert > p")
-    text.innerText = msg || (err && err.message) || err;
+    const p = $(".client-flash > .alert > p")
+    p.innerText = msg || (err && err.message) || err;
     flashDiv.style.display = "block";
     $(".remove-client-flash").on("click", removeErrorFlash);
 }
 
 const removeErrorFlash = () => {
     const flashDiv = $(".client-flash");
-    const text = $(".client-flash > .alert > p")
+    const p = $(".client-flash > .alert > p")
     flashDiv.style.display = "none";
-    text.innerText = "";
+    p.innerText = "";
 }
 
 export { newErrorFlash, removeErrorFlash, catchErrors };

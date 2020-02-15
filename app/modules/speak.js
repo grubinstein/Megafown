@@ -3,7 +3,7 @@ require('regenerator-runtime/runtime');
 import axios from 'axios';
 import { $ } from './bling';
 import { getLocation } from './location';
-import { newErrorFlash, removeErrorFlash, catchErrors } from './flashes';
+import { catchErrors } from './flashes';
 import { createPeer, destroyPeer, getAudioStream } from './peer';
 
 let castId;

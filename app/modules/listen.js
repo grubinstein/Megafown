@@ -12,7 +12,7 @@ const connectToCast = async (castID) => {
     if(!connectedPeer) { 
         throw newUserFriendlyError("Unable to connect to any of supplied peers. Please try again.");
     }
-    reportConnection(localPeerID, connectedPeer.id, castID);
+    reportConnection(localPeerID, connectedPeer.id, castID, connectedPeer.tier + 1);
 };
 
 const getRemotePeers = async (castID) => { 
@@ -23,11 +23,12 @@ const getRemotePeers = async (castID) => {
     }).then(res => res.data);
 };
 
-const reportConnection = (localPeer, connectedPeer, castID) => {
+const reportConnection = (localPeer, connectedPeer, castID, tier) => {
     axios.post('/api/report-connection', {
         localPeer,
         connectedPeer,
-        castID
+        castID,
+        tier
     });
 }
 

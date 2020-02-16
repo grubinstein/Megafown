@@ -7,14 +7,15 @@ const brokerConnection = async (req, res) => {
 }
 
 const reportConnection = async (req, res) => {
-    const { localPeer, connectedPeer, castID } = req.body;
+    const { localPeer, connectedPeer, castID, tier } = req.body;
     await Promise.all(
         [
             incrementDownstreamPeers(connectedPeer),
             addPeerToDB(
                 castID,
                 localPeer,
-                connectedPeer
+                connectedPeer,
+                tier
             )
         ]
     );

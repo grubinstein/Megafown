@@ -13,8 +13,6 @@ const createPeer = () => new Promise((resolve, reject) => {
 			var call = peer.call(conn.peer, stream);
 		})
 	});
-	
-	
 });
 
 const getPeerId = () => peer.id;
@@ -37,10 +35,10 @@ const connectToPeer = (remoteID) => new Promise((resolve, reject) => {
 	const connection = peer.connect(remoteID);
 
 	peer.on('call', (call) => {
-		console.log("Received call");
 		call.answer();
-		resolve(true);
 		call.on("stream", (remoteStream) => {
+			resolve(true);
+			stream = remoteStream;
 			const player = document.getElementById("audio-player");
 			player.srcObject = remoteStream;
 			player.play();

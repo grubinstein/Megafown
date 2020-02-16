@@ -3,14 +3,21 @@ extends layout
 include mixins/_location
 
 block content
-	.map.col-12.col-md-6.flex-column.d-flex
-		.row
-			.flex-fill
-				+location()
-		.row.flex-grow-1
-			#map
-				p Loading Map...
-	.results.col-12.col-md-6
-		.row
-			ul.list-group.flex-fill
-	audio#audio-player
+	.col-12.d-flex.justify-content-center
+		.cast-search.row.flex-grow-1.flex-fill
+			.map.col-12.col-md-6.flex-column.d-flex
+				.row
+					.flex-fill
+						+location()
+				.row.flex-grow-1
+					#map
+						p Loading Map...
+			.results.col-12.col-md-6
+				.row
+					ul.list-group.flex-fill
+			audio#audio-player
+		.cast-playing.my-auto.flex-grow-1.justify-content-center.d-none
+			h2.text-success.text-center Playing
+			img.playing-image.mx-auto.img-fluid(src="images/playing.png")
+			.text-center
+				button.btn.btn-danger(type="button" id="stopPlayingBtn") Stop playing

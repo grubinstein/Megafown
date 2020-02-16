@@ -69,6 +69,10 @@ export const addPeerToDB = ({castID, localPeerID, remotePeerID, tier}) => {
     })).save();
 }
 
+export const deletePeerFromDB = peerID => {
+    return Peer.findByIdAndDelete(peerID);
+}
+
 /**
  * Delete cast
  * @param {string} castID - ID of cast to be deleted
@@ -111,9 +115,17 @@ export const findCastsWithinRadius = async (lat, lng, radius) => {
 }
 
 export const incrementDownstreamPeers = peerID => {
+    return addToDownstreamPeers(peerID, 1);
+}
+
+export const decrementDownstreamPeers = peerID => {
+    return addToDownstreamPeers(peerID, -1)
+}
+
+const addToDownstreamPeers = (peerID, add) => {
     return Peer.findByIdAndUpdate(peerID, {
         $inc: {
-            downstreamPeers: 1
+            downstreamPeers: add
         }
-    });
+    })
 }

@@ -8,6 +8,7 @@ import { createPeer, destroyPeer, getAudioStream } from './peer';
 
 let castID;
 
+
 $("#castBtn") && $("#castBtn").on("click", async (e) => {
 	e.preventDefault();
 	await catchErrors(prepareForCast, {
@@ -15,6 +16,7 @@ $("#castBtn") && $("#castBtn").on("click", async (e) => {
 		onFail: destroyPeer
 	})();
 });
+
 
 const prepareForCast = async () => {
 	const [ localPeer ] =  await Promise.all([ createPeer(), getAudioStream() ]);
@@ -28,23 +30,23 @@ const endCast = async () => {
 	toggleSuccess();
 }
 
-$("#stopBtn") && $("#stopBtn").on("click", catchErrors(endCast, {msg: "Error occured while deleting cast"} ));
+$("#stopCastBtn") && $("#stopCastBtn").on("click", catchErrors(endCast, {msg: "Error occured while deleting cast"} ));
 
 const sendCastData = async (localPeerID) => {
-		const coordinates = getLocation();
-		const cast = {
-			name: $("#castName").value,
-			coordinates,
-			localPeerID
-		};
-		
-		axios.post('/api/new-cast', cast)
-			.then(function(res) {
-				castID = res.data;
-			})
-			.catch(() => {
-				newUserFriendlyError("Error while sending cast data to server.")
-			});
+	const coordinates = getLocation();
+	const cast = {
+		name: $("#castName").value,
+		coordinates,
+		localPeerID
+	};
+	
+	axios.post('/api/new-cast', cast)
+	.then(function(res) {
+		castID = res.data;
+	})
+	.catch(() => {
+		newUserFriendlyError("Error while sending cast data to server.")
+	});
 }
 
 const toggleSuccess = () => {

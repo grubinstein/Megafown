@@ -15,7 +15,7 @@ function autocomplete(input) {
 	});
 	input.on('keydown', (e) => {
 		if(e.keycode === 13) e.preventDefault();
-	})
+	});
 }
 
 autocomplete($(".autocomplete"));

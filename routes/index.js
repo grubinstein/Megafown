@@ -27,6 +27,8 @@ router.post('/api/end-cast', catchErrors(castController.endCast));
 router.post('/api/nearby-casts', catchErrors(castController.nearbyCasts));
 
 router.post('/api/report-connection', catchErrors(peerController.reportConnection));
+router.post('/api/report-disconnection', catchErrors(peerController.reportDisconnection));
 router.get('/api/broker-connection', catchErrors(peerController.brokerConnection));
+
 
 module.exports = router;

@@ -1,21 +1,19 @@
 'use strict'
 
-let peer;
-let stream;
+let peer, stream, upstreamConnection, upstreamCall;
 
 const createPeer = () => new Promise((resolve, reject) => {
 	peer = new Peer();
-	peer.on('open', resolve);
-
 	peer.on('connection', (conn) => {
 		conn.on('open', () => {
 			console.log("New connection from " + conn.peer);
 			var call = peer.call(conn.peer, stream);
 		})
 	});
+	peer.on('open', resolve);
 });
 
-const getPeerId = () => peer.id;
+const getPeerID = () => peer.id;
 
 const destroyPeer = () => {
     peer.destroy();
@@ -31,11 +29,12 @@ const getAudioStream = () => new Promise((resolve, reject) => {
 	});
 });
 
-const connectToPeer = (remoteID) => new Promise((resolve, reject) => {
-	const connection = peer.connect(remoteID);
+const connectToPeer = remoteID => new Promise((resolve, reject) => {
+	upstreamConnection = peer.connect(remoteID);
 
 	peer.on('call', (call) => {
 		call.answer();
+		upstreamCall = call;
 		call.on("stream", (remoteStream) => {
 			resolve(true);
 			stream = remoteStream;
@@ -47,8 +46,14 @@ const connectToPeer = (remoteID) => new Promise((resolve, reject) => {
 
 	setTimeout(() => {
 		resolve(false);
-		connection.close();
+		upstreamConnection.close();
 	},2000);
 });
 
-export { createPeer, getPeerId, destroyPeer, getAudioStream, connectToPeer};
+const disconnectFromPeer = () => {
+	upstreamConnection;
+	upstreamConnection.close();
+	upstreamCall.close();
+}
+
+export { createPeer, getPeerID, destroyPeer, getAudioStream, connectToPeer, disconnectFromPeer};

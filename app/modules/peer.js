@@ -2,7 +2,6 @@
 
 let peer;
 let stream;
-let connected = false;
 
 const createPeer = () => new Promise((resolve, reject) => {
 	peer = new Peer();
@@ -40,8 +39,7 @@ const connectToPeer = (remoteID) => new Promise((resolve, reject) => {
 	peer.on('call', (call) => {
 		console.log("Received call");
 		call.answer();
-		connected = true;
-		resolve();
+		resolve(true);
 		call.on("stream", (remoteStream) => {
 			const player = document.getElementById("audio-player");
 			player.srcObject = remoteStream;
@@ -50,9 +48,9 @@ const connectToPeer = (remoteID) => new Promise((resolve, reject) => {
 	})
 
 	setTimeout(() => {
-		reject();
+		resolve(false);
 		connection.close();
 	},2000);
 });
 
-export { createPeer, getPeerId, destroyPeer, getAudioStream, connectToPeer, connected };
+export { createPeer, getPeerId, destroyPeer, getAudioStream, connectToPeer};

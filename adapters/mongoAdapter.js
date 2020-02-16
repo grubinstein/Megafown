@@ -60,21 +60,13 @@ export const addCastToDB = async (name, coords) => {
  * @param {string} remotePeerID - Peer.js id for remote peer (undefined if casting peer)
  * @returns {Promise} - Stored peer as JSON object with connected (date), tier (number), id (localPeerID) & remotePeerID (string), cast (id as string), downstreamPeers (number)
  */
-export const addPeerToDB = async (cast, id, remotePeerID, tier) => {
-    const peer = await (new Peer({
-        _id: id,
-        remotePeerID,
-        cast,
+export const addPeerToDB = ({castID, localPeerID, remotePeerID, tier}) => {
+    return (new Peer({
+        _id: localPeerID,
+        remotePeer: remotePeerID,
+        cast: castID,
         tier
     })).save();
-    return {
-        connected: peer.connected,
-        tier: peer.tier,
-        id: peer._id,
-        remotePeerID: peer.remotePeerID,
-        cast: peer.cast,
-        downstreamPeers: peer.downstreamPeers
-    }
 }
 
 /**

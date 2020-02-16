@@ -3,7 +3,7 @@ require('regenerator-runtime/runtime');
 import axios from 'axios';
 import { $ } from './bling';
 import { getLocation } from './location';
-import { catchErrors } from './errorHandling';
+import { catchErrors, newUserFriendlyError } from './errorHandling';
 import { createPeer, destroyPeer, getAudioStream } from './peer';
 
 let castID;
@@ -17,8 +17,8 @@ $("#castBtn") && $("#castBtn").on("click", async (e) => {
 });
 
 const prepareForCast = async () => {
-	const [ peerId ] =  await Promise.all([ createPeer(), getAudioStream() ]);
-	castID = await sendCastData(peerId);
+	const [ localPeer ] =  await Promise.all([ createPeer(), getAudioStream() ]);
+	await sendCastData(localPeer);
 	toggleSuccess();
 }
 
@@ -30,23 +30,21 @@ const endCast = async () => {
 
 $("#stopBtn") && $("#stopBtn").on("click", catchErrors(endCast, {msg: "Error occured while deleting cast"} ));
 
-const sendCastData = async (peerID) => {
+const sendCastData = async (localPeerID) => {
 		const coordinates = getLocation();
 		const cast = {
 			name: $("#castName").value,
 			coordinates,
-			peerID
+			localPeerID
 		};
 		
-		const response = await axios.post('/api/new-cast', cast);
-
-		if (response.status === 201) {
-			return response.data;
-		} 
-
-		const err = new Error("Failed with status " + response.status);
-		err.specific = true;
-		throw err;
+		axios.post('/api/new-cast', cast)
+			.then(function(res) {
+				castID = res.data;
+			})
+			.catch(() => {
+				newUserFriendlyError("Error while sending cast data to server.")
+			});
 }
 
 const toggleSuccess = () => {

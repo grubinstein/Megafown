@@ -4,15 +4,17 @@ import { newUserFriendlyError } from './errorHandling';
 
 const connectToCast = async (castID) => {
     const [localPeerID, remotePeers] = await Promise.all([createPeer(), getRemotePeers(castID)]);
-
-    const connectedPeer = remotePeers.find(async (p) => {
-        return await connectToPeer(p.id);
+    const connectedPeer = remotePeers.find(async ({ candidatePeerID }) => {
+        return await connectToPeer(candidatePeerID);
     });
     
-    if(!connectedPeer) { 
-        throw newUserFriendlyError("Unable to connect to any of supplied peers. Please try again.");
-    }
-    reportConnection(localPeerID, connectedPeer.id, castID, connectedPeer.tier + 1);
+    if(!connectedPeer) {throw newUserFriendlyError("Unable to connect to any of supplied peers. Please try again.")}
+    
+    reportConnection(
+        localPeerID, 
+        connectedPeer, 
+        castID, 
+    );
 };
 
 const getRemotePeers = async (castID) => { 
@@ -23,10 +25,12 @@ const getRemotePeers = async (castID) => {
     }).then(res => res.data);
 };
 
-const reportConnection = (localPeer, connectedPeer, castID, tier) => {
+const reportConnection = (localPeerID, remotePeer, castID) => {
+    const remotePeerID = remotePeer.id;
+    const tier = remotePeer.tier + 1;
     axios.post('/api/report-connection', {
-        localPeer,
-        connectedPeer,
+        localPeerID,
+        remotePeerID,
         castID,
         tier
     });

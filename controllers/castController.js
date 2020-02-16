@@ -4,15 +4,15 @@ const Peer = mongoose.model('Peer');
 import { addCastToDB, addPeerToDB, deleteCast, findCastsWithinRadius } from '../adapters/mongoAdapter';
 
 exports.createCast = async (req, res) => {
-    const data = req.body;
+    const { name, coordinates, localPeerID } = req.body;
     const castID = await addCastToDB(
-        data.name,
-        data.coordinates
+        name,
+        coordinates
     );
-    await addPeerToDB(
+    await addPeerToDB({
         castID,
-        data.peerID
-    );
+        localPeerID
+    });
     res.status(201).json(castID);
 }
 

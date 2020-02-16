@@ -19,6 +19,7 @@ const connectToCast = async castID => {
     togglePlaying();
     remotePeerID = connectedPeer.id;
     reportConnection(localPeerID, connectedPeer, castID);
+    window.addEventListener('unload', disconnectFromCast);
 };
 
 const getRemotePeers = async (castID) => { 

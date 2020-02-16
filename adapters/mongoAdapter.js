@@ -81,7 +81,7 @@ export const addPeerToDB = async (cast, id, remotePeerID) => {
  * @param {string} castID - ID of cast to be deleted
  * @returns {Promise} - Deleted cast
  */
-export const deleteCast = (castID) => {
+export const deleteCast = castID => {
     return Cast.findByIdAndDelete(castID);
 }
 

@@ -1,4 +1,4 @@
-import { getViablePeersForCast } from '../adapters/mongoAdapter';
+import { getViablePeersForCast, addPeerToDB, incrementDownstreamPeers } from '../adapters/mongoAdapter';
 
 const brokerConnection = async (req, res) => {
     const castID = req.query.castID;
@@ -6,4 +6,19 @@ const brokerConnection = async (req, res) => {
     res.status(200).json(peers);
 }
 
-export { brokerConnection }
+const reportConnection = async (req, res) => {
+    const { localPeer, connectedPeer, castID } = req.body;
+    await Promise.all(
+        [
+            incrementDownstreamPeers(connectedPeer),
+            addPeerToDB(
+                castID,
+                localPeer,
+                connectedPeer
+            )
+        ]
+    );
+    res.status(200).send();
+}
+
+export { brokerConnection, reportConnection }

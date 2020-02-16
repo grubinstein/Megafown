@@ -116,3 +116,11 @@ export const findCastsWithinRadius = async (lat, lng, radius) => {
         }
     });
 }
+
+export const incrementDownstreamPeers = peerID => {
+    return Peer.findByIdAndUpdate(peerID, {
+        $inc: {
+            downstreamPeers: 1
+        }
+    });
+}

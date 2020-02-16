@@ -25,6 +25,8 @@ router.get("/speak", (req, res) => {
 router.post('/api/new-cast', catchErrors(castController.createCast));
 router.post('/api/end-cast', catchErrors(castController.endCast));
 router.post('/api/nearby-casts', catchErrors(castController.nearbyCasts));
+
+router.post('/api/report-connection', catchErrors(peerController.reportConnection));
 router.get('/api/broker-connection', catchErrors(peerController.brokerConnection));
 
 module.exports = router;

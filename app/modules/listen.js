@@ -6,7 +6,7 @@ const connectToCast = async (castID) => {
     await createPeer();
     let i = 0;
     console.log(remotePeers);
-    while(!connected) {
+    while(!connected && i < remotePeers.length) {
         console.log(i);
         await connectToPeer(remotePeers[i].peerID).catch(function() { i++ });
     }

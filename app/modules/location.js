@@ -1,5 +1,5 @@
 import { $ } from './bling';
-import { newUserFriendlyError, catchErrors } from './flashes';
+import { newUserFriendlyError, catchErrors } from './errorHandling';
 
 let coordinates;
 

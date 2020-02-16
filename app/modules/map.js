@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { $, $$ } from './bling';
 import { connectToCast } from './listen';
-import { catchErrors } from './flashes';
+import { catchErrors } from './errorHandling';
 const markers = [];
 const listItems = [];
 const infoWindow = new google.maps.InfoWindow();

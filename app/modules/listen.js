@@ -1,14 +1,16 @@
 import axios from 'axios';
 import { createPeer, connectToPeer, connected } from './peer';
+import { newUserFriendlyError } from './errorHandling';
 
 const connectToCast = async (castID) => {
-    const remotePeers = await getRemotePeers(castID);
-    await createPeer();
-    let i = 0;
-    console.log(remotePeers);
-    while(!connected && i < remotePeers.length) {
-        console.log(i);
-        await connectToPeer(remotePeers[i].peerID).catch(function() { i++ });
+    const [localPeerID, remotePeers] = await Promise.all([createPeer(), getRemotePeers(castID)]);
+
+    const connectedPeer = remotePeers.find(async (p) => {
+        return await connectToPeer(p.id);
+    });
+    
+    if(!connectedPeer) { 
+        throw newUserFriendlyError("Unable to connect to any of supplied peers. Please try again.");
     }
 };
 

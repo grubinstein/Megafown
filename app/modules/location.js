@@ -1,5 +1,5 @@
 import { $ } from './bling';
-import { newErrorFlash, removeErrorFlash, catchErrors } from './flashes';
+import { newUserFriendlyError, catchErrors } from './flashes';
 
 let coordinates;
 
@@ -16,9 +16,7 @@ const setLocation = (newCoordinates) => {
 
 const getLocation = () => {
     if(!coordinates) {
-        const err = new Error("You need to provide your location");
-        err.specific = true;
-        throw err;
+        throw newUserFriendlyError("You need to provide your location");
     }
     return coordinates;
 }

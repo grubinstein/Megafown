@@ -6,7 +6,7 @@ import { getLocation } from './location';
 import { catchErrors } from './flashes';
 import { createPeer, destroyPeer, getAudioStream } from './peer';
 
-let castId;
+let castID;
 
 $("#castBtn") && $("#castBtn").on("click", async (e) => {
 	e.preventDefault();
@@ -18,8 +18,7 @@ $("#castBtn") && $("#castBtn").on("click", async (e) => {
 
 const prepareForCast = async () => {
 	const [ peerId ] =  await Promise.all([ createPeer(), getAudioStream() ]);
-	const cast = await sendCastData(peerId);
-	castId = cast._id;
+	castID = await sendCastData(peerId);
 	toggleSuccess();
 }
 
@@ -31,18 +30,12 @@ const endCast = async () => {
 
 $("#stopBtn") && $("#stopBtn").on("click", catchErrors(endCast, {msg: "Error occured while deleting cast"} ));
 
-const sendCastData = async (peerId) => {
-		const coords = getLocation();
-
+const sendCastData = async (peerID) => {
+		const coordinates = getLocation();
 		const cast = {
 			name: $("#castName").value,
-			location: {
-				coordinates: [
-					coords[1],
-					coords[0]
-				]
-			},
-			peerId
+			coordinates,
+			peerID
 		};
 		
 		const response = await axios.post('/api/new-cast', cast);
@@ -62,5 +55,5 @@ const toggleSuccess = () => {
 }
 
 const deleteCast = async () => {
-	await axios.post("/api/end-cast", { id: castId })
+	await axios.post("/api/end-cast", { id: castID })
 }

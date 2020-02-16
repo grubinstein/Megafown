@@ -11,11 +11,11 @@ const peerSchema = new mongoose.Schema({
         min: 0,
         default: 0
     },
-    peerId: {
+    peerID: {
         type: String,
         required: "You must supply a peer ID"
     },
-    remotePeerId: {
+    remotePeerID: {
         type: String,
         required: "You must supply a remote peer ID"
     },

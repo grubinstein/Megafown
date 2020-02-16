@@ -1,16 +1,9 @@
-const mongoose = require('mongoose');
-const Peer = mongoose.model('Peer');
+import { getViablePeersForCast } from '../adapters/mongoAdapter';
 
-exports.brokerConnection = async (req, res) => {
+const brokerConnection = async (req, res) => {
     const castID = req.query.castID;
-    const peer = await Peer.findOneAndUpdate({
-        downstreamPeers: { $lt: 2 },
-        cast: castID
-    }, { 
-        $inc: { downstreamPeers: 1 }
-    }, {
-        new: true,
-        sort: { tier: 1 }
-    });
-    res.status(200).json(peer);
+    const peers = await getViablePeersForCast(castID, 2, 4);
+    res.status(200).json(peers);
 }
+
+export { brokerConnection }

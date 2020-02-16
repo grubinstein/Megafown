@@ -78,8 +78,7 @@ const addSearchLocationToMap = (lat, lng, map, bounds) => {
 }    
 
 const createMarker = (cast, i, map, bounds) => {
-    const [castLng, castLat] = cast.location.coordinates;
-    const position = { lat: castLat, lng: castLng };
+    const position = { lat: cast.lat, lng: cast.lng };
 
     bounds.extend(position);
     
@@ -107,7 +106,7 @@ const createListItem = (cast, i) => {
                                     <p>Started ${moment(cast.created).fromNow()}</p>
                                 </div>
                                 <div class="col-3 my-auto">
-                                    <button class="cast-connect btn btn-outline-primary" id="list-item-${i}" data-cast-id=${cast._id}>Connect
+                                    <button class="cast-connect btn btn-outline-primary" id="list-item-${i}" data-cast-id=${cast.id}>Connect
                                 </div>
                             </div>
                         `;    
@@ -142,7 +141,7 @@ const showPopupOnMap = (marker, map) => {
                     <div class="popup" style="text-align: center">
                         <p><strong>${cast.name}</strong></p>
                         <p>Created ${moment(cast.created).fromNow()}</p>
-                        <button class="cast-connect btn btn-outline-primary btn-sm" data-cast-id=${cast._id}>Connect</button>
+                        <button class="cast-connect btn btn-outline-primary btn-sm" data-cast-id=${cast.id}>Connect</button>
                     </div>
                 `;    
     infoWindow.setContent(html);            

@@ -1,36 +1,34 @@
 const mongoose = require('mongoose');
 const Cast = mongoose.model('Cast');
 const Peer = mongoose.model('Peer');
+import { addCastToDB, addPeerToDB, deleteCast, findCastsWithinRadius } from '../adapters/mongoAdapter';
 
 exports.createCast = async (req, res) => {
-    const cast = await (new Cast(req.body)).save();
-    await (new Peer({
-        peerId: req.body.peerId,
-        remotePeerId: "Source",
-        cast: cast._id,
-    })).save();
-    res.status(201).json(cast);
+    const data = req.body;
+    const castID = await addCastToDB(
+        data.name,
+        data.coordinates
+    );
+    await addPeerToDB(
+        data.peerID,
+        "Source",
+        castID
+    );
+    res.status(201).json(castID);
 }
 
 exports.endCast = async (req, res) => {
-    const deletedCast = await Cast.findByIdAndDelete(req.body.id)
+    const deletedCast = await deleteCast(req.body.id);
     if(!deletedCast) { return res.status(404).send() };
     res.status(200).send();
 }
 
 exports.nearbyCasts = async (req, res) => {
-    const coordinates = [req.body.lng, req.body.lat].map(parseFloat);
-    const query = {
-        location: {
-            $near: {
-                $geometry: {
-                    type: 'Point',
-                    coordinates
-                },
-                $maxDistance: 2000
-            }
-        }
-    };
-    const casts = await Cast.find(query).select('name location peerId created');
+    const query = req.body;
+    const casts = await findCastsWithinRadius(
+        query.lat,
+        query.lng,
+        2000
+    );
     res.json(casts);
 }

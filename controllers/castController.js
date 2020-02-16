@@ -5,14 +5,9 @@ import { addCastToDB, addPeerToDB, deleteCast, findCastsWithinRadius } from '../
 
 exports.createCast = async (req, res) => {
     const { name, coordinates, localPeerID } = req.body;
-    const castID = await addCastToDB(
-        name,
-        coordinates
-    );
-    await addPeerToDB({
-        castID,
-        localPeerID
-    });
+    const castID = await addCastToDB(name, coordinates);
+    
+    await addPeerToDB({castID, localPeerID});
     res.status(201).json(castID);
 }
 
@@ -23,11 +18,7 @@ exports.endCast = async (req, res) => {
 }
 
 exports.nearbyCasts = async (req, res) => {
-    const query = req.body;
-    const casts = await findCastsWithinRadius(
-        query.lat,
-        query.lng,
-        2000
-    );
+    const { lat, lng } = req.body;
+    const casts = await findCastsWithinRadius(lat, lng, 2000);
     res.json(casts);
 }

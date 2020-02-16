@@ -19,10 +19,6 @@ const castSchema = new mongoose.Schema({
             type: Number,
             required: 'You must supply coordinates'
         }]
-    },
-    peerId: {
-        type: String,
-        required: 'You must supply a peerid'
     }
 });
 

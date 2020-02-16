@@ -32,13 +32,14 @@ const getDeviceLocation = () => new Promise( (resolve, reject) => {
 
 const toggleLocationBtns = () => {
     const locationInput = $(".autocomplete")
-    if(locationInput.placeholder == "Type to find location") {
+    if(locationInput.placeholder != "Using current location") {
+        locationInput.value = null;
         locationInput.placeholder = "Using current location";
         locationInput.style.backgroundColor = "#CCCCCC";
     } else {
         locationInput.placeholder = "Type to find location";
-        locationInput.value = null;
-        locationInput.style.backgroundColor = "#FFFFFF"
+        locationInput.style.backgroundColor = "#FFFFFF";
+        coordinates = null;
     }
     locationInput.disabled = !locationInput.disabled;
     $("#currentLocationBtn").classList.toggle("d-none");

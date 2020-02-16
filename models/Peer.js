@@ -16,8 +16,7 @@ const peerSchema = new mongoose.Schema({
         default: 0
     },
     remotePeerID: {
-        type: String,
-        required: "You must supply a remote peer ID"
+        type: 'String'
     },
     cast: {
         type: mongoose.Schema.ObjectId,

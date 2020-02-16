@@ -10,9 +10,8 @@ exports.createCast = async (req, res) => {
         data.coordinates
     );
     await addPeerToDB(
-        data.peerID,
-        "Source",
-        castID
+        castID,
+        data.peerID
     );
     res.status(201).json(castID);
 }

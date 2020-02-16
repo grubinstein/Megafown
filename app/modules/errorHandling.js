@@ -8,8 +8,7 @@ import { $ } from './bling';
  * @param {object} options - Optional object containing: {msg: String to replace actual error in flash, onFail: function to run on error for cleanup}
  * @returns {function} - Wrapped function 
  */
-const catchErrors = (fn, options = {}) => function() {
-    const { msg, onFail } = options;
+const catchErrors = (fn, { msg, onFail } = {}) => function() {
     removeErrorFlash();
     return fn(...arguments).catch(err => {
         onFail && onFail();

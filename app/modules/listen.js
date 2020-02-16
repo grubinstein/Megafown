@@ -1,18 +1,23 @@
 import axios from 'axios';
-import { createPeer, connectToPeer } from './peer';
+import { createPeer, connectToPeer, connected } from './peer';
 
 const connectToCast = async (castID) => {
+    const remotePeers = await getRemotePeers(castID);
     await createPeer();
-    const remotePeerID = await getRemotePeerID(castID);
-    connectToPeer(remotePeerID);
+    let i = 0;
+    console.log(remotePeers);
+    while(!connected) {
+        console.log(i);
+        await connectToPeer(remotePeers[i].peerID).catch(function() { i++ });
+    }
 };
 
-const getRemotePeerID = async (castID) => { 
+const getRemotePeers = async (castID) => { 
     return await axios.get('/api/broker-connection',{
         params: {
             castID 
         }
-    }).then(res => res.data.peerId);
+    }).then(res => res.data);
 };
 
 export { connectToCast }

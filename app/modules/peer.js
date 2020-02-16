@@ -2,6 +2,7 @@
 
 let peer;
 let stream;
+let connected = false;
 
 const createPeer = () => new Promise((resolve, reject) => {
 	peer = new Peer();
@@ -14,15 +15,7 @@ const createPeer = () => new Promise((resolve, reject) => {
 		})
 	});
 	
-	peer.on('call', (call) => {
-		console.log("Received call");
-		call.answer();
-		call.on("stream", (remoteStream) => {
-			const player = document.getElementById("audio-player");
-			player.srcObject = remoteStream;
-			player.play();
-		})
-	})
+	
 });
 
 const getPeerId = () => peer.id;
@@ -41,8 +34,25 @@ const getAudioStream = () => new Promise((resolve, reject) => {
 	});
 });
 
-const connectToPeer = (remoteID) => {  
-	peer.connect(remoteID);
-}
+const connectToPeer = (remoteID) => new Promise((resolve, reject) => {
+	const connection = peer.connect(remoteID);
 
-export { createPeer, getPeerId, destroyPeer, getAudioStream, connectToPeer };
+	peer.on('call', (call) => {
+		console.log("Received call");
+		call.answer();
+		connected = true;
+		resolve();
+		call.on("stream", (remoteStream) => {
+			const player = document.getElementById("audio-player");
+			player.srcObject = remoteStream;
+			player.play();
+		})
+	})
+
+	setTimeout(() => {
+		reject();
+		connection.close();
+	},2000);
+});
+
+export { createPeer, getPeerId, destroyPeer, getAudioStream, connectToPeer, connected };

@@ -43,4 +43,14 @@ const removeErrorFlash = () => {
     p.innerText = "";
 }
 
-export { newErrorFlash, removeErrorFlash, catchErrors };
+/**
+ * Creates error with specific parameter so if caught by catchErrors the message will be shown to the user
+ * @param {string} msg 
+ */
+const newUserFriendlyError = (msg) => {
+    const err = new Error(msg);
+    err.specific = true;
+    return err;
+}
+
+export { newErrorFlash, removeErrorFlash, catchErrors, newUserFriendlyError };

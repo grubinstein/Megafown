@@ -2,6 +2,12 @@
 require('regenerator-runtime/runtime');
 import { $ } from './bling';
 
+/**
+ * Wraps function, returning new function that will catch errors, present an optional user-friendly error (or actual error) in a flash, log actual error to the console, and run and optional callback on error
+ * @param {function} fn - Function to be wrapped
+ * @param {object} options - Optional object containing: {msg: String to replace actual error in flash, onFail: function to run on error for cleanup}
+ * @returns {function} - Wrapped function 
+ */
 const catchErrors = (fn, options = {}) => function() {
     const { msg, onFail } = options;
     removeErrorFlash();
@@ -12,16 +18,24 @@ const catchErrors = (fn, options = {}) => function() {
     });
 }
 
+/**
+ * Presents flash to user and logs error to console. For flash will prefer messages from errors with "specific" parameter > msg > message from other errors > errors
+ * @param {Error} err - Error to log to console (and possibly show in flash) 
+ * @param {string} msg - User friendly error message for flash
+ */
 const newErrorFlash = (err, msg) => {
-    console.log(err);
+    err & console.log(err);
     removeErrorFlash();
     const flashDiv = $(".client-flash");
     const p = $(".client-flash > .alert > p")
-    p.innerText = (err.specific && err.message) || msg || (err && err.message) || err;
+    p.innerText = (err && err.specific && err.message) || msg || (err && err.message) || err;
     flashDiv.style.display = "block";
     $(".remove-client-flash").on("click", removeErrorFlash);
 }
 
+/**
+ * Removes any error flashes present on screen
+ */
 const removeErrorFlash = () => {
     const flashDiv = $(".client-flash");
     const p = $(".client-flash > .alert > p")

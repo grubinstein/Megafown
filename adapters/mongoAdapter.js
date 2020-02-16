@@ -11,7 +11,7 @@ const Peer = model('Peer');
  * @param {number} numPeers - The number of peers to return.
  * @returns {Promise} Array of peers as JSON objects with peerID and tier
  */
-export const getViablePeersForCast =  async (castID, maxDownstreamConnections, numPeers) => {
+export const getViablePeersForCast = async (castID, maxDownstreamConnections, numPeers) => {
     const peers = await Peer.find(
         {
             downstreamPeers: { $lt: maxDownstreamConnections },
@@ -25,8 +25,13 @@ export const getViablePeersForCast =  async (castID, maxDownstreamConnections, n
             },
             limit: numPeers
         }
-    ).select('peerID tier');
-    return peers;
+    ).select('tier');
+    return peers.map(p => {
+        return {
+            id: p._id,
+            tier: p.tier
+        }
+    })
 }
 
 /**
@@ -50,17 +55,25 @@ export const addCastToDB = async (name, coords) => {
 
 /**
  * Create a peer record in database
- * @param {string} peerID - Peer.js id for local peer
+ * @param {string} id - Peer.js id for local peer
  * @param {string} remotePeerID - Peer.js id for remote peer or "Source" if caster
  * @param {string} cast - ID of the cast this peer is listening to
- * @returns {Promise} - Stored peer as JSON object with connected (date), tier (number), peerID & remotePeerID (string), cast (id as string), downstreamPeers (number)
+ * @returns {Promise} - Stored peer as JSON object with connected (date), tier (number), id (localPeerID) & remotePeerID (string), cast (id as string), downstreamPeers (number)
  */
-export const addPeerToDB = (peerID, remotePeerID, cast) => {
-    return (new Peer({
-        peerID,
+export const addPeerToDB = async (id, remotePeerID, cast) => {
+    const peer = await (new Peer({
+        _id: id,
         remotePeerID,
         cast
     })).save();
+    return {
+        connected: peer.connected,
+        tier: peer.tier,
+        id: peer._id,
+        remotePeerID: peer.remotePeerID,
+        cast: peer.cast,
+        downstreamPeers: peer.downstreamPeers
+    }
 }
 
 /**

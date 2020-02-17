@@ -4,7 +4,7 @@ import axios from 'axios';
 import { $ } from './bling';
 import { getLocation } from './location';
 import { catchErrors, newUserFriendlyError } from './errorHandling';
-import { createPeer, destroyPeer, getAudioStream } from './peer';
+import { createPeer, getPeerID, destroyPeer, getAudioStream } from './peer';
 
 let castID;
 
@@ -22,6 +22,8 @@ const prepareForCast = async () => {
 	const [ localPeer ] =  await Promise.all([ createPeer(), getAudioStream() ]);
 	await sendCastData(localPeer);
 	toggleSuccess();
+
+    window.addEventListener('unload', endCast);
 }
 
 const endCast = async () => {
@@ -55,5 +57,6 @@ const toggleSuccess = () => {
 }
 
 const deleteCast = async () => {
-	await axios.post("/api/end-cast", { id: castID })
+	const peerID = getPeerID();
+	await axios.post("/api/end-cast", { castID, peerID })
 }

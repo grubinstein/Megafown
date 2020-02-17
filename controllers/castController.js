@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Cast = mongoose.model('Cast');
 const Peer = mongoose.model('Peer');
-import { addCastToDB, addPeerToDB, deleteCast, findCastsWithinRadius } from '../adapters/mongoAdapter';
+import { addCastToDB, addPeerToDB, deleteCastFromDB, deletePeerFromDB, findCastsWithinRadius } from '../adapters/mongoAdapter';
 
 exports.createCast = async (req, res) => {
     const { name, coordinates, localPeerID } = req.body;
@@ -12,8 +12,14 @@ exports.createCast = async (req, res) => {
 }
 
 exports.endCast = async (req, res) => {
-    const deletedCast = await deleteCast(req.body.id);
-    if(!deletedCast) { return res.status(404).send() };
+    const { castID, peerID } = req.body;
+    const [ deletedCast, deletedPeer ] = await Promise.all(
+        [
+            deleteCastFromDB(castID),
+            deletePeerFromDB(peerID)
+        ]
+    );
+    if(!deletedCast && !deletedPeer) { return res.status(404).send() };
     res.status(200).send();
 }
 

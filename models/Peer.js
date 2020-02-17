@@ -15,7 +15,7 @@ const peerSchema = new mongoose.Schema({
         min: 0,
         default: 0
     },
-    remotePeer: {
+    upstreamPeer: {
         type: 'String'
     },
     cast: {

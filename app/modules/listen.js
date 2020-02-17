@@ -2,25 +2,29 @@ import axios from 'axios';
 import { createPeer, connectToPeer, disconnectFromPeer, getPeerID } from './peer';
 import { newUserFriendlyError, catchErrors } from './errorHandling';
 import { $ } from './bling';
-let remotePeerID;
+let upstreamPeer, connectedCastID;
 
 const connectToCast = async castID => {
-    const [localPeerID, remotePeers] = await Promise.all([createPeer(), getRemotePeers(castID)]);
-    let i = 0;
-    let connected = false;
+    const [localPeerID, upstreamPeersList] = await Promise.all([createPeer(), getRemotePeers(castID)]);
+    upstreamPeer = await connectToFirstAvailablePeer(upstreamPeersList);
 
-    while(!connected && i < remotePeers.length) {
-        connected = await connectToPeer(remotePeers[i].id);
-        if(!connected) {i++}
-    }
-    if(!connected) {throw newUserFriendlyError("Unable to connect to any of supplied peers. Please try again.");}
+    if(!upstreamPeer) {throw newUserFriendlyError("Unable to connect to any of supplied peers. Please try again.");}
     
-    const connectedPeer = remotePeers[i];
     togglePlaying();
-    remotePeerID = connectedPeer.id;
-    reportConnection(localPeerID, connectedPeer, castID);
+    connectedCastID = castID;
+    reportConnection(localPeerID, castID);
+
     window.addEventListener('unload', disconnectFromCast);
 };
+
+const connectToFirstAvailablePeer = async (peers) => {
+    for(let i = 0; i < peers.length; i++) {
+        if(await connectToPeer(peers[i].id)){
+            return peers[i];
+        }
+    }
+    return false;
+}
 
 const getRemotePeers = async (castID) => { 
     return await axios.get('/api/broker-connection',{
@@ -30,12 +34,12 @@ const getRemotePeers = async (castID) => {
     }).then(res => res.data);
 };
 
-const reportConnection = (localPeerID, remotePeer, castID) => {
-    const remotePeerID = remotePeer.id;
-    const tier = remotePeer.tier + 1;
+const reportConnection = (localPeerID, castID) => {
+    const upstreamPeerID = upstreamPeer.id;
+    const tier = upstreamPeer.tier + 1;
     axios.post('/api/report-connection', {
         localPeerID,
-        remotePeerID,
+        upstreamPeerID,
         castID,
         tier
     });
@@ -57,11 +61,11 @@ const reportDisconnection = async () => {
     const localPeerID = getPeerID();
     axios.post('/api/report-disconnection', {
         localPeerID,
-        remotePeerID
+        upstreamPeerID: upstreamPeer.id
     }).then(() => {
         togglePlaying();
+        upstreamPeer = null;
         connectedCastID = null;
-        connecterPeerID = null;
     })
 }
 

@@ -7,10 +7,10 @@ const brokerConnection = async (req, res) => {
 }
 
 const reportConnection = async (req, res) => {
-    const { remotePeerID } = req.body;
+    const { upstreamPeerID } = req.body;
     await Promise.all(
         [
-            incrementDownstreamPeers(remotePeerID),
+            incrementDownstreamPeers(upstreamPeerID),
             addPeerToDB(req.body)
         ]
     );
@@ -18,10 +18,10 @@ const reportConnection = async (req, res) => {
 }
 
 const reportDisconnection = async (req, res) => {
-    const { localPeerID, remotePeerID } = req.body;
+    const { localPeerID, upstreamPeerID } = req.body;
     await Promise.all(
         [
-            decrementDownstreamPeers(remotePeerID),
+            decrementDownstreamPeers(upstreamPeerID),
             deletePeerFromDB(localPeerID)
         ]
     );

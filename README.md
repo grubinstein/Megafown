@@ -1,46 +1,8 @@
-# express-webpack-boilerplate
-An [express](http://expressjs.com/) and [webpack](https://webpack.github.io/) boilerplate for creating [SPA](https://en.wikipedia.org/wiki/Single-page_application)s.
-The boilerplate is frontend agnostic and 
-Features:
-- hot reload
-- convenient configured webpack loaders
-- convenient configured express middlewares
+# Megafown
+This webapp is designed to help speakers be heard at demonstrations and protests etc, where it is not practical to have a PA powerful enough to be heard by the entire crowd. The idea is that audio is distributed P2P to people spread out through the crowd, who each use a portable speaker to relay the speaker's words to those around them.
 
-## usage
-There are 2 ways to use this boilerplate. You can fork the code (shown below) or you can recreate it using it as a guideline like a right copycat.
+## Casting
+Either the organisers or someone at the front of the protest can create a cast using a laptop or mobile device. They simply access the app URL, click cast, and provide a cast name and location (or use their device location).
 
-### forking
-This will create a fork with two remotes so you can still push to your own repository and retrieve updates from this.
-```
-mkdir $APPLICATION_NAME
-cd $APPLICATION_NAME
-git init
-git remote add upstream git@github.com:TimurKiyivinski/express-webpack-boilerplate.git
-git pull upstream master
-git remote add origin $YOUR_REPO_URL
-git push -u origin master
-```
-That should be it! If you use `HTTPS` instead of `SSH` because you're some sort of hipster that remembers passwords, replace `git@github.com:TimurKiyivinski/express-webpack-boilerplate.git` with `https://github.com/TimurKiyivinski/express-webpack-boilerplate.git` instead.
-
-## getting started
-Copy `env.json.example` to `env.json` and run `npm install`. Make sure you have webpack all set up.
-
-### build tools
-Webpack is configured in `webpack.config.js` and loaded by `index.js` when the `environment` key in `env.json` is configured as `development`. You may add and customize the loaders depending on your frontend stack. Webpack code is built and bundled to the `public/` directory.
-
-### entrypoint
-Your `index.html` should serve as the loader for webpack and should serve as the entrypoint for your webpack bundle.
-Your main application entrypoint is in `app/main.js`. Your entire frontend stack goes into the `app/` directory.
-
-### express
-This should be logical if you're familiar with Express. You can create your APIs here.
-The boilerplate is configured such that all routes for the relative path `assets/` are routed to `index.html` to be handled by your frontend router. Put your Express code after the place noted:
-```
-// Put your Express code here
-app.use((req, res, next) => {
-  // This is an example middleware
-  next()
-})
-
-app.get('/v1/users', ...) // Example
-```
+## Listening
+Those who wish to connect to the cast pull up the app URL, click listen, and see a map of casts in their area. They click on the right cast and click connect. They will then automatically be connected to the most upstream peer who is not already streaming to the max number of downstream connections, they will also be registered as an available peer for new peers to receive audio from.

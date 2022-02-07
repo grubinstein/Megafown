@@ -73,14 +73,16 @@ const connectToUpstreamPeer = remoteID => new Promise((resolve, reject) => {
 	},2000);
 });
 
-const disconnectFromPeer = () => {
+const disconnectFromPeers = () => {
 	upstreamConnection.close();
 	upstreamCall.close();
 	downstreamPeerConnections.forEach(c => c.close());
+	downstreamPeerConnections.splice(0, downstreamPeerConnections.length)
 }
 
 const handleUpstreamDisconnect = () => {
 	console.log("Upstream peer disconnected");
+	
 }
 
-export { createPeer, getPeerID, destroyPeer, getAudioStream, connectToUpstreamPeer, disconnectFromPeer};
+export { createPeer, getPeerID, destroyPeer, getAudioStream, connectToUpstreamPeer, disconnectFromPeers};

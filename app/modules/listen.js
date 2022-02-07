@@ -19,7 +19,9 @@ const connectToCast = async castID => {
 
 const connectToFirstAvailablePeer = async (peers) => {
     for(let i = 0; i < peers.length; i++) {
-        if(await connectToUpstreamPeer(peers[i].id)){
+        const upstreamCall = await connectToUpstreamPeer(peers[i].id)
+        if (upstreamCall) {
+            peers[i].call = upstreamCall;
             return peers[i];
         }
     }

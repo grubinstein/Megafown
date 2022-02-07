@@ -1,26 +1,26 @@
 'use strict'
 
 let peer, stream, upstreamConnection, upstreamCall;
-let downstreamPeerConnections = [];
+let downstreamPeerCalls = [];
 let maxDownstreamPeers = 2;
 
 const createPeer = () => new Promise((resolve, reject) => {
 	peer = new Peer();
 	peer.on('connection', (conn) => {
-		if(downstreamPeerConnections.length == maxDownstreamPeers) {
+		if(downstreamPeerCalls.length == maxDownstreamPeers) {
 			conn.send("at capacity");
 		} else {
 			conn.on('open', () => {
 				console.log("New connection from " + conn.peer);
-				peer.call(conn.peer, stream);
-				downstreamPeerConnections.push(conn);
-			})
+				const call = peer.call(conn.peer, stream);
+				downstreamPeerCalls.push(call);
 
-			conn.on('close', () => {
-				const index = downstreamPeerConnections.indexOf(conn);
-				if(index > -1) {
-					downstreamPeerConnections.splice(index,1);
-				}
+				call.on('close', () => {
+					const index = downstreamPeerCalls.indexOf(call);
+					if(index > -1) {
+						downstreamPeerCalls.splice(index,1);
+					}
+				})
 			})
 		}
 	});
@@ -50,18 +50,19 @@ const connectToUpstreamPeer = remoteID => new Promise((resolve, reject) => {
 		call.answer();
 		upstreamCall = call;
 		call.on("stream", (remoteStream) => {
-			resolve(true);
 			stream = remoteStream;
 			const player = document.getElementById("audio-player");
 			player.srcObject = remoteStream;
 			player.play();
+			upstreamCall.on('close', handleUpstreamDisconnect);
+			resolve(upstreamCall);
 		})
 	})
 
 	peer.on('data', (message) => {
 		if(message == "at capacity") {
-			resolve(false);
 			upstreamConnection.close();
+			resolve(false);
 		}
 	})
 
@@ -74,8 +75,8 @@ const disconnectFromPeers = () => {
 }
 
 const disconnectFromDownStreamPeers = () => {
-	downstreamPeerConnections.forEach(c => c.close());
-	downstreamPeerConnections.splice(0, downstreamPeerConnections.length);
+	downstreamPeerCalls.forEach(c => c.close());
+	downstreamPeerCalls.splice(0, downstreamPeerCalls.length);
 }
 
 const handleUpstreamDisconnect = () => {

@@ -65,12 +65,6 @@ const connectToUpstreamPeer = remoteID => new Promise((resolve, reject) => {
 		}
 	})
 
-	upstreamConnection.on('close', handleUpstreamDisconnect);
-	
-	setTimeout(() => {
-		resolve(false);
-		upstreamConnection.close();
-	},2000);
 });
 
 const disconnectFromPeers = () => {

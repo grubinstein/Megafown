@@ -65,7 +65,6 @@ const connectToPeer = remoteID => new Promise((resolve, reject) => {
 });
 
 const disconnectFromPeer = () => {
-	upstreamConnection;
 	upstreamConnection.close();
 	upstreamCall.close();
 }

@@ -15,6 +15,13 @@ const createPeer = () => new Promise((resolve, reject) => {
 				peer.call(conn.peer, stream);
 				downstreamPeerConnections.push(conn);
 			})
+
+			conn.on('close', () => {
+				const index = downstreamPeerConnections.indexOf(conn);
+				if(index > -1) {
+					downstreamPeerConnections.splice(index,1);
+				}
+			})
 		}
 	});
 	peer.on('open', resolve);

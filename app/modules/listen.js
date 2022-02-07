@@ -3,6 +3,7 @@ import { createPeer, connectToUpstreamPeer, disconnectFromPeers, getPeerID } fro
 import { newUserFriendlyError, catchErrors } from './errorHandling';
 import { $ } from './bling';
 let upstreamPeer, connectedCastID;
+let connected = false;
 
 const connectToCast = async castID => {
     const [localPeerID, upstreamPeersList] = await Promise.all([createPeer(), getRemotePeers(castID)]);
@@ -10,6 +11,9 @@ const connectToCast = async castID => {
 
     if(!upstreamPeer) {throw newUserFriendlyError("Unable to connect to any of supplied peers. Please try again.");}
     
+    connected = true;
+	upstreamPeer.call.on('close', handleUpstreamDisconnect);
+
     togglePlaying();
     connectedCastID = castID;
     reportConnection(localPeerID, castID);
@@ -21,6 +25,7 @@ const connectToFirstAvailablePeer = async (peers) => {
     for(let i = 0; i < peers.length; i++) {
         const upstreamCall = await connectToUpstreamPeer(peers[i].id)
         if (upstreamCall) {
+            console.log(upstreamCall);
             peers[i].call = upstreamCall;
             return peers[i];
         }
@@ -53,6 +58,7 @@ const togglePlaying = () => {
 }
 
 const disconnectFromCast = async () => {
+    connected = false;
     disconnectFromPeers();
     await reportDisconnection();
 }
@@ -69,6 +75,17 @@ const reportDisconnection = async () => {
         upstreamPeer = null;
         connectedCastID = null;
     })
+}
+
+const handleUpstreamDisconnect = async () => {
+    if(!connected) {return;}
+    const castID = connectedCastID;
+	console.log("Upstream peer disconnected");
+	await reportDisconnection();
+    console.log("Reported disconnection");
+    disconnectFromDownStreamPeers();
+	console.log("Disconnected downstream peers");
+    await connectToCast(castID);
 }
 
 export { connectToCast }

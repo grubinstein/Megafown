@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { createPeer, connectToPeer, disconnectFromPeer, getPeerID } from './peer';
+import { createPeer, connectToPeer, disconnectFromPeers, getPeerID } from './peer';
 import { newUserFriendlyError, catchErrors } from './errorHandling';
 import { $ } from './bling';
 let upstreamPeer, connectedCastID;
@@ -51,7 +51,7 @@ const togglePlaying = () => {
 }
 
 const disconnectFromCast = async () => {
-    disconnectFromPeer();
+    disconnectFromPeers();
     await reportDisconnection();
 }
 

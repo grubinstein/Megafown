@@ -1,19 +1,19 @@
 'use strict'
 
 let peer, stream, upstreamConnection, upstreamCall;
-let downstreamPeers = 0;
+let downstreamPeerConnections = [];
 let maxDownstreamPeers = 2;
 
 const createPeer = () => new Promise((resolve, reject) => {
 	peer = new Peer();
 	peer.on('connection', (conn) => {
-		if(downstreamPeers == maxDownstreamPeers) {
+		if(downstreamPeerConnections.length == maxDownstreamPeers) {
 			conn.send("at capacity");
 		} else {
 			conn.on('open', () => {
 				console.log("New connection from " + conn.peer);
 				peer.call(conn.peer, stream);
-				downstreamPeers++;
+				downstreamPeerConnections.push(conn);
 			})
 		}
 	});

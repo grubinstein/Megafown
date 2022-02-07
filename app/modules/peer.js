@@ -43,7 +43,7 @@ const getAudioStream = () => new Promise((resolve, reject) => {
 	});
 });
 
-const connectToPeer = remoteID => new Promise((resolve, reject) => {
+const connectToUpstreamPeer = remoteID => new Promise((resolve, reject) => {
 	upstreamConnection = peer.connect(remoteID);
 
 	peer.on('call', (call) => {
@@ -77,4 +77,4 @@ const disconnectFromPeer = () => {
 	downstreamPeerConnections.forEach(c => c.close());
 }
 
-export { createPeer, getPeerID, destroyPeer, getAudioStream, connectToPeer, disconnectFromPeer};
+export { createPeer, getPeerID, destroyPeer, getAudioStream, connectToUpstreamPeer, disconnectFromPeer};

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { createPeer, connectToPeer, disconnectFromPeer, getPeerID } from './peer';
+import { createPeer, connectToUpstreamPeer, disconnectFromPeer, getPeerID } from './peer';
 import { newUserFriendlyError, catchErrors } from './errorHandling';
 import { $ } from './bling';
 let upstreamPeer, connectedCastID;
@@ -19,7 +19,7 @@ const connectToCast = async castID => {
 
 const connectToFirstAvailablePeer = async (peers) => {
     for(let i = 0; i < peers.length; i++) {
-        if(await connectToPeer(peers[i].id)){
+        if(await connectToUpstreamPeer(peers[i].id)){
             return peers[i];
         }
     }

@@ -20,14 +20,16 @@ Some of the appeal of this approach is that it is partially decentralised. Once 
 
 ## Setup
 Requires two files for environmental variables:
-env.json:
-{
-    "environment" : "*development/production*",
-    "secret" : "*secret for express-session*"
-    "key" : "*key for express-session*"
-    "database" : "*MongoDB URI*"
-}
-
-variables.env
-MAP_KEY=*google maps API key*
+env.json:  
+  
+{  
+    "environment" : "*development/production*",  
+    "secret" : "*secret for express-session*"  
+    "key" : "*key for express-session*"  
+    "database" : "*MongoDB URI*"  
+}  
+  
+variables.env:  
+  
+MAP_KEY=*google maps API key*  
 

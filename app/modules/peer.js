@@ -1,24 +1,24 @@
 'use strict'
 
 let peer, stream, upstreamConnection, upstreamCall;
-let downstreamPeerCalls = [];
+let downstreamPeerConnections = [];
 let maxDownstreamPeers = 2;
 
 const createPeer = () => new Promise((resolve, reject) => {
 	peer = new Peer();
 	peer.on('connection', (conn) => {
-		if(downstreamPeerCalls.length == maxDownstreamPeers) {
+		if(downstreamPeerConnections.length == maxDownstreamPeers) {
 			conn.send("at capacity");
 		} else {
 			conn.on('open', () => {
 				console.log("New connection from " + conn.peer);
 				const call = peer.call(conn.peer, stream);
-				downstreamPeerCalls.push(call);
+				downstreamPeerConnections.push(conn);
 
-				call.on('close', () => {
-					const index = downstreamPeerCalls.indexOf(call);
+				conn.on('close', () => {
+					const index = downstreamPeerConnections.indexOf(conn);
 					if(index > -1) {
-						downstreamPeerCalls.splice(index,1);
+						downstreamPeerConnections.splice(index,1);
 					}
 				})
 			})
@@ -54,7 +54,7 @@ const connectToUpstreamPeer = remoteID => new Promise((resolve, reject) => {
 			const player = document.getElementById("audio-player");
 			player.srcObject = remoteStream;
 			player.play();
-			resolve(upstreamCall);
+			resolve(upstreamConnection);
 		})
 	})
 
@@ -74,8 +74,8 @@ const disconnectFromPeers = () => {
 }
 
 const disconnectFromDownStreamPeers = () => {
-	downstreamPeerCalls.forEach(c => c.close());
-	downstreamPeerCalls.splice(0, downstreamPeerCalls.length);
+	downstreamPeerConnections.forEach(c => c.close());
+	downstreamPeerConnections.splice(0, downstreamPeerConnections.length);
 }
 
 export { createPeer, getPeerID, destroyPeer, getAudioStream, connectToUpstreamPeer, disconnectFromPeers};

@@ -52,13 +52,10 @@ const handleUpstreamCall = resolve => call => {
 }
 
 const handleDownstreamConnection = conn => {
-	console.log("New downstream connection");
 	if(downstreamPeerConnections.length == maxDownstreamPeers) {
-		console.log("Rejecting due to capacity");
 		conn.send("at capacity");
 	} else {
 		conn.on('open', () => {
-			console.log("New connection from " + conn.peer);
 			const call = peer.call(conn.peer, stream);
 			downstreamPeerConnections.push(conn);
 			conn.on('close', handleDownstreamDisconnect(conn))
@@ -71,7 +68,6 @@ const handleDownstreamDisconnect = conn => () => {
 	if(index > -1) {
 		downstreamPeerConnections.splice(index,1);
 	}
-	console.log(downstreamPeerConnections);
 }
 
 const disconnectFromPeers = () => {

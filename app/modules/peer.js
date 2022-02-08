@@ -6,24 +6,7 @@ let maxDownstreamPeers = 2;
 
 const createPeer = () => new Promise((resolve, reject) => {
 	peer = new Peer();
-	peer.on('connection', (conn) => {
-		if(downstreamPeerConnections.length == maxDownstreamPeers) {
-			conn.send("at capacity");
-		} else {
-			conn.on('open', () => {
-				console.log("New connection from " + conn.peer);
-				const call = peer.call(conn.peer, stream);
-				downstreamPeerConnections.push(conn);
-
-				conn.on('close', () => {
-					const index = downstreamPeerConnections.indexOf(conn);
-					if(index > -1) {
-						downstreamPeerConnections.splice(index,1);
-					}
-				})
-			})
-		}
-	});
+	peer.on('connection', handleDownstreamConnection);
 	peer.on('open', resolve);
 });
 
@@ -46,30 +29,54 @@ const getAudioStream = () => new Promise((resolve, reject) => {
 const connectToUpstreamPeer = remoteID => new Promise((resolve, reject) => {
 	upstreamConnection = peer.connect(remoteID);
 
-	peer.on('call', (call) => {
-		call.answer();
-		upstreamCall = call;
-		call.on("stream", (remoteStream) => {
-			stream = remoteStream;
-			const player = document.getElementById("audio-player");
-			player.srcObject = remoteStream;
-			player.play();
-			resolve(upstreamConnection);
-		})
-	})
-
-	peer.on('data', (message) => {
+	peer.on('data', message => {
 		if(message == "at capacity") {
 			upstreamConnection.close();
 			resolve(false);
 		}
 	})
-
+	
+	peer.on('call', handleUpstreamCall(resolve));
 });
+
+const handleUpstreamCall = resolve => call => {
+	call.answer();
+	upstreamCall = call;
+	call.on("stream", (remoteStream) => {
+		stream = remoteStream;
+		const player = document.getElementById("audio-player");
+		player.srcObject = remoteStream;
+		player.play();
+		resolve(upstreamConnection);
+	})
+}
+
+const handleDownstreamConnection = conn => {
+	if(downstreamPeerConnections.length == maxDownstreamPeers) {
+		conn.send("at capacity");
+	} else {
+		conn.on('open', () => {
+			console.log("New connection from " + conn.peer);
+			const call = peer.call(conn.peer, stream);
+			downstreamPeerConnections.push(conn);
+
+			conn.on('close', handleDownstreamDisconnect)
+		})
+	}
+}
+
+const handleDownstreamDisconnect = conn => {
+	const index = downstreamPeerConnections.indexOf(conn);
+	if(index > -1) {
+		downstreamPeerConnections.splice(index,1);
+	}
+}
 
 const disconnectFromPeers = () => {
 	upstreamConnection.close();
 	upstreamCall.close();
+	upstreamConnection = null;
+	upstreamCall = null;
 	disconnectFromDownStreamPeers();
 }
 

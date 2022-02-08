@@ -12,15 +12,15 @@ const createPeer = () => new Promise((resolve, reject) => {
 		} else {
 			conn.on('open', () => {
 				console.log("New connection from " + conn.peer);
-				peer.call(conn.peer, stream);
+				const call = peer.call(conn.peer, stream);
 				downstreamPeerConnections.push(conn);
-			})
 
-			conn.on('close', () => {
-				const index = downstreamPeerConnections.indexOf(conn);
-				if(index > -1) {
-					downstreamPeerConnections.splice(index,1);
-				}
+				conn.on('close', () => {
+					const index = downstreamPeerConnections.indexOf(conn);
+					if(index > -1) {
+						downstreamPeerConnections.splice(index,1);
+					}
+				})
 			})
 		}
 	});
@@ -43,38 +43,39 @@ const getAudioStream = () => new Promise((resolve, reject) => {
 	});
 });
 
-const connectToPeer = remoteID => new Promise((resolve, reject) => {
+const connectToUpstreamPeer = remoteID => new Promise((resolve, reject) => {
 	upstreamConnection = peer.connect(remoteID);
 
 	peer.on('call', (call) => {
 		call.answer();
 		upstreamCall = call;
 		call.on("stream", (remoteStream) => {
-			resolve(true);
 			stream = remoteStream;
 			const player = document.getElementById("audio-player");
 			player.srcObject = remoteStream;
 			player.play();
+			resolve(upstreamConnection);
 		})
 	})
 
 	peer.on('data', (message) => {
 		if(message == "at capacity") {
-			resolve(false);
 			upstreamConnection.close();
+			resolve(false);
 		}
 	})
-	
-	setTimeout(() => {
-		resolve(false);
-		upstreamConnection.close();
-	},2000);
+
 });
 
 const disconnectFromPeers = () => {
 	upstreamConnection.close();
 	upstreamCall.close();
-	downstreamPeerConnections.forEach(c => c.close());
+	disconnectFromDownStreamPeers();
 }
 
-export { createPeer, getPeerID, destroyPeer, getAudioStream, connectToPeer, disconnectFromPeers};
+const disconnectFromDownStreamPeers = () => {
+	downstreamPeerConnections.forEach(c => c.close());
+	downstreamPeerConnections.splice(0, downstreamPeerConnections.length);
+}
+
+export { createPeer, getPeerID, destroyPeer, getAudioStream, connectToUpstreamPeer, disconnectFromPeers};

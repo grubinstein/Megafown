@@ -22,9 +22,11 @@ const getLocation = () => {
 }
 
 const getDeviceLocation = () => new Promise( (resolve, reject) => {
+    console.log("Getting location");
     navigator.geolocation.getCurrentPosition(position => {
         coordinates = [position.coords.latitude, position.coords.longitude];
         setLocation(coordinates);
+        console.log("Got location");
         toggleLocationBtns();
         resolve();
     }, reject);

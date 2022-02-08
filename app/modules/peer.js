@@ -32,6 +32,7 @@ const connectToUpstreamPeer = remoteID => new Promise((resolve, reject) => {
 	peer.on('data', message => {
 		if(message == "at capacity") {
 			upstreamConnection.close();
+			upstreamConnection = null;
 			resolve(false);
 		}
 	})
@@ -47,8 +48,26 @@ const handleUpstreamCall = resolve => call => {
 		const player = document.getElementById("audio-player");
 		player.srcObject = remoteStream;
 		player.play();
-		resolve(upstreamConnection);
+		const upstreamConnectionWrapper = new connectionWrapper(upstreamConnection);
+		resolve(upstreamConnectionWrapper);
 	})
+}
+
+class connectionWrapper {
+	closeListeners = [];
+	
+	constructor(conn) {
+		conn.on('close', this.callCloseListeners);
+	}
+
+	listenForClose(fn) {
+		this.closeListeners.push(fn);
+	}
+
+	callCloseListeners = () => {
+		if (!this.closeListeners.length) {return;}
+		this.closeListeners.forEach(fn => fn());
+	}
 }
 
 const handleDownstreamConnection = conn => {

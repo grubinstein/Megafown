@@ -10,11 +10,14 @@ const connectToCast = async castID => {
     const [localPeerID, upstreamPeersList] = await Promise.all([createPeer(), getRemotePeers(castID)]);
     upstreamPeer = await connectToFirstAvailablePeer(upstreamPeersList);
 
-    if(!upstreamPeer) {throw newUserFriendlyError("Unable to connect to any of supplied peers. Please try again.");}
+    if(!upstreamPeer) {
+        changeDisplayState("search");
+        throw newUserFriendlyError("Unable to connect to any of supplied peers. Please try again.");
+    }
     
     changeDisplayState("playing");
     connected = true;
-    upstreamPeer.connection.on('close', handleUpstreamDisconnect);
+    upstreamPeer.connection.listenForClose(handleUpstreamDisconnect);
 
     connectedCastID = castID;
     reportConnection(localPeerID, castID);

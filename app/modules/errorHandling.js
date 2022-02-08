@@ -52,4 +52,20 @@ const newUserFriendlyError = (msg) => {
     return err;
 }
 
-export { newErrorFlash, removeErrorFlash, catchErrors, newUserFriendlyError };
+const promiseTimeout = (ms, promise) => {
+
+    let timeout = new Promise((resolve, reject) => {
+      let id = setTimeout(() => {
+        clearTimeout(id);
+        resolve(false)
+      }, ms)
+    })
+  
+    // Returns a race between our timeout and the passed in promise
+    return Promise.race([
+      promise,
+      timeout
+    ])
+  }
+
+export { newErrorFlash, removeErrorFlash, catchErrors, newUserFriendlyError, promiseTimeout };

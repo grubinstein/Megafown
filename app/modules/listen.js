@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { createPeer, connectToUpstreamPeer, disconnectFromPeers, getPeerID } from './peer';
-import { newUserFriendlyError, catchErrors } from './errorHandling';
+import { newUserFriendlyError, catchErrors, promiseTimeout } from './errorHandling';
 import { $ } from './bling';
 let upstreamPeer, connectedCastID;
 let connected = false;
@@ -24,7 +24,7 @@ const connectToCast = async castID => {
 
 const connectToFirstAvailablePeer = async (peers) => {
     for(let i = 0; i < peers.length; i++) {
-        const upstreamConnection = await connectToUpstreamPeer(peers[i].id)
+        const upstreamConnection = await promiseTimeout(2000,connectToUpstreamPeer(peers[i].id));
         if (upstreamConnection) {
             peers[i].connection = upstreamConnection;
             return peers[i];

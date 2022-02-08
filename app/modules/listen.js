@@ -6,15 +6,16 @@ let upstreamPeer, connectedCastID;
 let connected = false;
 
 const connectToCast = async castID => {
+    changeDisplayState("connecting");
     const [localPeerID, upstreamPeersList] = await Promise.all([createPeer(), getRemotePeers(castID)]);
     upstreamPeer = await connectToFirstAvailablePeer(upstreamPeersList);
 
     if(!upstreamPeer) {throw newUserFriendlyError("Unable to connect to any of supplied peers. Please try again.");}
     
+    changeDisplayState("playing");
     connected = true;
     upstreamPeer.connection.on('close', handleUpstreamDisconnect);
 
-    changeDisplayState("playing");
     connectedCastID = castID;
     reportConnection(localPeerID, castID);
 
@@ -52,7 +53,7 @@ const reportConnection = (localPeerID, castID) => {
 }
 
 const changeDisplayState = (newState) => {
-    const states = ["search","playing"];
+    const states = ["search","playing","connecting"];
     states.forEach(state => {
         if(state == newState) {
             $(".cast-" + state).classList.remove("d-none");

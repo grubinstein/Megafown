@@ -19,7 +19,7 @@ If it was possible to add closed captions to support those who are hard of heari
 Some of the appeal of this approach is that it is partially decentralised. Once all peers are connected, an attack on the app's server would not stop the speaker from being heard. Unfortunately, when a peer loses their connection they do need the server to find a new one, and if they have a lot of peers downstream this could knock out a large part of the crowd. It's interesting to think about how the app could become more decentralised. The server code could be modified to run in the browser and all peers could keep a copy of the peer database (could be a blockchain usecase, to protect from malicious edits to the database). New peers could connect by scanning a QR code from an existing peer's device. Perhaps it would even be possible to transmit the app itself peer to peer.
 
 ## Setup
-Requires two files for environmental variables:
+Requires two files for environmental variables:  
 env.json:  
   
 {  

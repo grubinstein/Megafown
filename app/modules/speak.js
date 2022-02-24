@@ -4,7 +4,7 @@ import axios from 'axios';
 import { $ } from './bling';
 import { getLocation } from './location';
 import { catchErrors, newUserFriendlyError } from './errorHandling';
-import { createPeer, getPeerID, destroyPeer, getAudioStream } from './peer';
+import { createPeer, getPeerID, destroyPeer, getAudioStream, sendCastEndSignal } from './peer';
 
 let castID;
 
@@ -27,9 +27,10 @@ const prepareForCast = async () => {
 }
 
 const endCast = async () => {
-	destroyPeer();
+	await sendCastEndSignal();
 	await deleteCast();
 	toggleSuccess();
+	destroyPeer();
 }
 
 $("#stopCastBtn") && $("#stopCastBtn").on("click", catchErrors(endCast, {msg: "Error occured while deleting cast"} ));

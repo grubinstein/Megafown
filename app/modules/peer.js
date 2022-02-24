@@ -55,18 +55,33 @@ const handleUpstreamCall = resolve => call => {
 
 class connectionWrapper {
 	closeListeners = [];
+	castEndListeners = [];
 	
 	constructor(conn) {
 		conn.on('close', this.callCloseListeners);
+		conn.on('data', message => {
+			if (message == "cast ended") {
+				this.callCastEndListeners();
+			}
+		});
 	}
 
 	listenForClose(fn) {
 		this.closeListeners.push(fn);
 	}
 
+	listenForCastEnd(fn) {
+		this.castEndListeners.push(fn);
+	}
+
 	callCloseListeners = () => {
 		if (!this.closeListeners.length) {return;}
 		this.closeListeners.forEach(fn => fn());
+	}
+
+	callCastEndListeners = () => {
+		if (!this.castEndListeners.length) {return;}
+		this.castEndListeners.forEach(fn => fn());
 	}
 }
 
@@ -75,11 +90,16 @@ const handleDownstreamConnection = conn => {
 		conn.send("at capacity");
 	} else {
 		conn.on('open', () => {
+			conn.send("hello");
 			const call = peer.call(conn.peer, stream);
 			downstreamPeerConnections.push(conn);
 			conn.on('close', handleDownstreamDisconnect(conn))
 		})
 	}
+} 
+
+const sendCastEndSignal = () => {
+	downstreamPeerConnections.forEach(conn => conn.send("cast ended"));
 }
 
 const handleDownstreamDisconnect = conn => () => {
@@ -102,4 +122,4 @@ const disconnectFromDownStreamPeers = () => {
 	downstreamPeerConnections.splice(0, downstreamPeerConnections.length);
 }
 
-export { createPeer, getPeerID, destroyPeer, getAudioStream, connectToUpstreamPeer, disconnectFromPeers};
+export { createPeer, getPeerID, destroyPeer, getAudioStream, connectToUpstreamPeer, disconnectFromPeers, sendCastEndSignal};

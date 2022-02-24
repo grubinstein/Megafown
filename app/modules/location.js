@@ -4,7 +4,7 @@ import { newUserFriendlyError, catchErrors } from './errorHandling';
 let coordinates;
 
 const setLocation = (newCoordinates) => {
-    coordinates = newCoordinates;
+    coordinates = newCoordinates || coordinates;
     const locationElement = $(".location");
     const locationChangedEvent = new CustomEvent("locationChanged", { 
         detail: {
@@ -22,11 +22,9 @@ const getLocation = () => {
 }
 
 const getDeviceLocation = () => new Promise( (resolve, reject) => {
-    console.log("Getting location");
     navigator.geolocation.getCurrentPosition(position => {
         coordinates = [position.coords.latitude, position.coords.longitude];
         setLocation(coordinates);
-        console.log("Got location");
         toggleLocationBtns();
         resolve();
     }, reject);

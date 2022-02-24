@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { createPeer, connectToUpstreamPeer, disconnectFromPeers, getPeerID } from './peer';
+import { createPeer, connectToUpstreamPeer, disconnectFromPeers, getPeerID, sendCastEndSignal } from './peer';
 import { newUserFriendlyError, catchErrors, promiseTimeout } from './errorHandling';
+import { setLocation } from './location';
 import { $ } from './bling';
 let upstreamPeer, connectedCastID;
 let connected = false;
@@ -17,6 +18,7 @@ const connectToCast = async castID => {
     
     changeDisplayState("playing");
     connected = true;
+    upstreamPeer.connection.listenForCastEnd(handleCastEnd);
     upstreamPeer.connection.listenForClose(handleUpstreamDisconnect);
 
     connectedCastID = castID;
@@ -56,7 +58,7 @@ const reportConnection = (localPeerID, castID) => {
 }
 
 const changeDisplayState = (newState) => {
-    const states = ["map","playing","connecting", "searching"];
+    const states = ["map","playing", "connecting", "searching", "end"];
     states.forEach(state => {
         if(state == newState) {
             $(".cast-" + state).classList.remove("d-none");
@@ -76,6 +78,10 @@ const disconnectFromCast = async () => {
 }
 
 $("#stopPlayingBtn") && $("#stopPlayingBtn").on("click", catchErrors(disconnectFromCast, {msg: "Stream failed to close properly."}));
+$("#newSearch") && $("#newSearch").on("click", () => {
+    changeDisplayState("map");
+    setLocation(null);
+});
 
 const reportDisconnection = async () => {
     const localPeerID = getPeerID();
@@ -85,12 +91,20 @@ const reportDisconnection = async () => {
     })
 }
 
+const handleCastEnd = async () => {
+    if(!connected) {return;}
+    connected = false;
+    await sendCastEndSignal();
+    changeDisplayState("end");
+    await reportDisconnection();
+}
+
 const handleUpstreamDisconnect = async () => {
+    disconnectFromPeers();
     if(!connected) {return;}
     connected = false;
     const castID = connectedCastID;
 	await reportDisconnection();
-    disconnectFromPeers();
 	await catchErrors(connectToCast(castID));
 }
 

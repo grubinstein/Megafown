@@ -26,12 +26,10 @@ export const getViablePeersForCast = async (castID, maxDownstreamConnections, nu
             limit: numPeers
         }
     ).select('tier');
-    return peers.map(p => {
-        return {
-            id: p._id,
-            tier: p.tier
-        }
-    })
+    return peers.map(p => ({
+        id: p._id,
+        tier: p.tier
+    }));
 }
 
 /**
@@ -61,7 +59,7 @@ export const addCastToDB = async (name, coords) => {
  * @returns {Promise} - Stored peer as JSON object with connected (date), tier (number), id (localPeerID) & upstreamPeerID (string), cast (id as string), downstreamPeers (number)
  */
 export const addPeerToDB = ({castID, localPeerID, upstreamPeerID, tier}) => {
-    return (new Peer({
+    (new Peer({
         _id: localPeerID,
         upstreamPeer: upstreamPeerID,
         cast: castID,
@@ -69,18 +67,14 @@ export const addPeerToDB = ({castID, localPeerID, upstreamPeerID, tier}) => {
     })).save();
 }
 
-export const deletePeerFromDB = peerID => {
-    return Peer.findByIdAndDelete(peerID);
-}
+export const deletePeerFromDB = peerID => Peer.findByIdAndDelete(peerID);
 
 /**
  * Delete cast
  * @param {string} castID - ID of cast to be deleted
  * @returns {Promise} - Deleted cast
  */
-export const deleteCastFromDB = castID => {
-    return Cast.findByIdAndDelete(castID);
-}
+export const deleteCastFromDB = castID => Cast.findByIdAndDelete(castID);
 
 /**
  * Find casts within given distance of lat lng
@@ -103,29 +97,21 @@ export const findCastsWithinRadius = async (lat, lng, radius) => {
         }
     };
     const casts = await Cast.find(query).select('name location created');
-    return casts.map(c => {
-        return {
-            id: c._id,
-            name: c.name,
-            lat: c.location.coordinates[1],
-            lng: c.location.coordinates[0],
-            created: c.created
-        }
-    });
+    return casts.map(c => ({
+        id: c._id,
+        name: c.name,
+        lat: c.location.coordinates[1],
+        lng: c.location.coordinates[0],
+        created: c.created
+    }));
 }
 
-export const incrementDownstreamPeers = peerID => {
-    return addToDownstreamPeers(peerID, 1);
-}
+export const incrementDownstreamPeers = peerID => addToDownstreamPeers(peerID, 1);
 
-export const decrementDownstreamPeers = peerID => {
-    return addToDownstreamPeers(peerID, -1)
-}
+export const decrementDownstreamPeers = peerID => addToDownstreamPeers(peerID, -1);
 
-const addToDownstreamPeers = (peerID, add) => {
-    return Peer.findByIdAndUpdate(peerID, {
+const addToDownstreamPeers = (peerID, add) => Peer.findByIdAndUpdate(peerID, {
         $inc: {
             downstreamPeers: add
         }
-    })
-}
+    });

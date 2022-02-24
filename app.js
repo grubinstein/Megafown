@@ -1,7 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const mongoose = require('mongoose');
-const MongoStore = require('connect-mongo')(session);
+const MongoStore = require('connect-mongo');
 const bodyParser = require('body-parser');
 const expressSanitizer = require('express-sanitizer');
 const cors = require('cors');
@@ -38,7 +38,7 @@ app.use(cors())
 if (env.environment === 'development') {
   const webConfig = require('./webpack.config')
   const middlewareConfig = {
-    publicPath: '/assets/',
+    publicPath: webConfig.output.publicPath,
     stats: {
       colors: true
     }
@@ -50,13 +50,12 @@ if (env.environment === 'development') {
   app.use(webpackHotMiddleware(webpackCompiler))
 }
 
-
 app.use(session({
   secret: env.secret,
   key: env.key,
   resave: false,
   saveUninitialized: false,
-  store: new MongoStore({ mongooseConnection: mongoose.connection, useUnifiedTopology: true })
+  store: MongoStore.create({mongoUrl: env.database})
 }));
 
 app.use(flash());

@@ -36,6 +36,7 @@ const fetchCasts = async (lat, lng) => await axios.post(
 );
 
 const loadCasts = ( casts, map, lat, lng ) => {
+    console.log(casts);
     if(!casts.length) {
         alert('no casts found!');
         return;

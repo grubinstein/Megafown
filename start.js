@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const env = JSON.parse(fs.readFileSync('env.json', 'utf8'))
 require('dotenv').config({ path: 'variables.env' });
 
-mongoose.connect(env.database, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true});
+mongoose.connect(env.database, {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.Promise = global.Promise; // Tell Mongoose to use ES6 promises
 mongoose.connection.on('error', (err) => {
   console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`);
@@ -13,7 +13,7 @@ mongoose.connection.on('error', (err) => {
 
 require('./models/Cast');
 require('./models/Peer');
-require('babel-core/register');
+require('@babel/register');
 require('babel-polyfill');
 
 const app = require('./app');

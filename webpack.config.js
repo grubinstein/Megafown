@@ -3,51 +3,54 @@ const webpack = require('webpack')
 require("babel-polyfill")
 // Define webpack config and loaders here
 module.exports = {
+  mode: 'development',
   entry: 
-    {
-      polyfill: 'babel-polyfill',
-      app: ['./app/main.js', 'webpack-hot-middleware/client']
-  },
+    [ 
+      '@babel/polyfill',
+      './app/main.js',
+      'webpack-hot-middleware/client'
+    ],
   output: {
     path: path.resolve(__dirname, 'public'),
     publicPath: '/assets/',
     filename: 'bundle.js'
   },
   plugins: [
-    new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
+    new webpack.NoEmitOnErrorsPlugin()
   ],
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
-        loader: 'babel',
         exclude: /node_modules/,
-        query: {
-          presets: ['es2015', 'stage-0'],
-          plugins: ['babel-plugin-transform-es2015-destructuring', 'babel-plugin-transform-object-rest-spread']
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env'],
+            plugins: ['babel-plugin-transform-es2015-destructuring', 'babel-plugin-transform-object-rest-spread']
+          }
         }
       },
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader'
+        use: 'style-loader!css-loader'
       },
       {
         test: /\.scss$/,
-        loaders: ['style-loader', 'css-loader', 'sass-loader']
+        use: ['style-loader', 'css-loader', 'sass-loader']
       },
       {
         test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'url-loader'
+        use: 'url-loader'
       },
       {
         test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
-        loader: 'file-loader'
+        use: 'file-loader'
       },
       {
         test: /\.json$/,
-        loader: 'json-loader'
+        use: 'json-loader'
       }
     ]
   }

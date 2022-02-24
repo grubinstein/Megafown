@@ -91,7 +91,7 @@ const handleUpstreamDisconnect = async () => {
     const castID = connectedCastID;
 	await reportDisconnection();
     disconnectFromPeers();
-	await connectToCast(castID);
+	await catchErrors(connectToCast(castID));
 }
 
 export { connectToCast }

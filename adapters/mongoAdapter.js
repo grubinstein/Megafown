@@ -76,6 +76,8 @@ export const deletePeerFromDB = peerID => Peer.findByIdAndDelete(peerID);
  */
 export const deleteCastFromDB = castID => Cast.findByIdAndDelete(castID);
 
+export const deletePeersFromDBByCastID = castID => Peer.deleteMany({cast: castID});
+
 /**
  * Find casts within given distance of lat lng
  * @param {number} lat - Latitude of position to search

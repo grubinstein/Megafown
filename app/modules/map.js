@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { $, $$ } from './bling';
-import { connectToCast } from './listen';
+import { connectToCast, changeDisplayState } from './listen';
 import { catchErrors } from './errorHandling';
 const markers = [];
 const listItems = [];
@@ -14,9 +14,9 @@ function makeMap(mapDiv) {
     const map = new google.maps.Map(mapDiv, mapOptions);
 
     $(".location").on("locationChanged", (event) => {
+        changeDisplayState("searching");
         const [ lat, lng ] = event.detail.coordinates;
 
-        clearCasts();
         fetchCasts(lat, lng)
             .then(res => loadCasts(res.data, map, lat, lng));
     });
@@ -39,6 +39,7 @@ const loadCasts = ( casts, map, lat, lng ) => {
     clearCasts();
     if(!casts.length) {
         alert('no casts found!');
+        changeDisplayState("map");
         return;
     }
     
@@ -59,6 +60,8 @@ const loadCasts = ( casts, map, lat, lng ) => {
     $$(".cast-connect").on('click', function() {
         catchErrors(connectToCast)(this.dataset.castId);
     });
+
+    changeDisplayState("map");
 };        
 
 const addSearchLocationToMap = (lat, lng, map, bounds) => {

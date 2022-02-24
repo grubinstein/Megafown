@@ -11,7 +11,7 @@ const connectToCast = async castID => {
     upstreamPeer = await connectToFirstAvailablePeer(upstreamPeersList);
 
     if(!upstreamPeer) {
-        changeDisplayState("search");
+        changeDisplayState("map");
         throw newUserFriendlyError("Unable to connect to any of supplied peers. Please try again.");
     }
     
@@ -56,7 +56,7 @@ const reportConnection = (localPeerID, castID) => {
 }
 
 const changeDisplayState = (newState) => {
-    const states = ["search","playing","connecting"];
+    const states = ["map","playing","connecting", "searching"];
     states.forEach(state => {
         if(state == newState) {
             $(".cast-" + state).classList.remove("d-none");
@@ -70,7 +70,7 @@ const disconnectFromCast = async () => {
     connected = false;
     disconnectFromPeers();
     await reportDisconnection();
-    changeDisplayState("search");
+    changeDisplayState("map");
     upstreamPeer = null;
     connectedCastID = null;
 }
@@ -94,4 +94,4 @@ const handleUpstreamDisconnect = async () => {
 	await catchErrors(connectToCast(castID));
 }
 
-export { connectToCast }
+export { connectToCast, changeDisplayState }
